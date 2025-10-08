@@ -234,6 +234,31 @@ enterpriseData.scenarios = {
   crisis:       [2500, 2450, 2400, 2350, 2300, 2280, 2250] // crisis -> much worse
 };
 
+enterpriseData.technologyLibrary = enterpriseData.technologyLibrary.map(tech => {
+  // copy existing to avoid losing fields
+  const copy = Object.assign({}, tech);
+  // default empty deps
+  copy.dependencies = copy.dependencies || [];
+  return copy;
+});
+
+const exampleDeps = {
+  1: [],               // Leak detection - foundational
+  2: [6],              // Electrification benefits from Digital Twin (planning / integration)
+  3: [6, 8],           // CCS needs Digital Twin + Subsea/Processing integration
+  4: [6, 8],           // Floating wind needs Digital Twin + Subsea readiness
+  5: [2, 4],           // Green H2 needs electrification and renewables
+  6: [],               // Digital Twin - enabler
+  7: [6],              // Waste heat recovery needs digital twin for optimization
+  8: [6]               // Subsea processing depends on Digital Twin for controls & design
+};
+
+enterpriseData.technologyLibrary.forEach(t => {
+  if (!t.dependencies || t.dependencies.length === 0) {
+    t.dependencies = exampleDeps[t.id] ? exampleDeps[t.id].slice() : [];
+  }
+});
+
 // Global application state
 let currentSection = 'dashboard';
 let charts = {};
@@ -245,12 +270,19 @@ let roadmapTechnologies = {
 let currentScenario = 'base';
 let draggedTech = null;
 
+let placedTechnologies = {
+  'short-term': [],
+  'medium-term': [],
+  'long-term': []
+};
+
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
   console.log('NZTC Enterprise Platform initializing...');
   
   setTimeout(() => {
     initializeNavigation();
+    initializeRoadmap();
     populateAIInsights();
     populateCompetitorFeed();
     populateWorkflows();
@@ -264,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
       createEmissionsChart();
     }
 
-    initializeTabs();
+    // initializeTabs();
 
     console.log('Enterprise platform ready');
   }, 100);
@@ -341,8 +373,6 @@ function populateAIInsights() {
   // Render feather icons in case new elements were added
   if (window.feather) feather.replace();
 }
-
-    
 
 // Populate Competitor Feed
 function populateCompetitorFeed() {
@@ -447,24 +477,49 @@ function populateTechnologyLibrary() {
 function renderTechnologyLibrary(technologies) {
   const container = document.getElementById('techLibrary');
   if (!container) return;
-  
+ 
   container.innerHTML = '';
   technologies.forEach(tech => {
+    const draggable = true; // library cards should be draggable
     const techCard = document.createElement('div');
     techCard.className = 'tech-card';
-    techCard.draggable = true;
-    techCard.dataset.techId = tech.id;
-    
+    if (draggable) {
+      techCard.setAttribute('draggable', 'true');
+      techCard.dataset.techId = tech.id;
+    }
+ 
     techCard.innerHTML = `
-      <h4>${tech.name}</h4>
-      <div class="tech-meta">
-        <span class="tech-badge">${tech.category}</span>
-        <span class="tech-badge">TRL ${tech.trl}</span>
-        <span class="tech-badge">${tech.confidence}%</span>
-      </div>
-      <p class="tech-description">${tech.description}</p>
+<div class="tech-card__header">
+<h4 class="tech-card__title">${tech.name}</h4>
+<span class="tech-card__trl">TRL ${tech.trl}</span>
+</div>
+<div class="tech-card__category">${tech.category}</div>
+<div class="tech-card__description">${tech.description}</div>
+<div class="tech-card__metrics">
+<div class="tech-metric">
+<span class="tech-metric__label">Impact</span>
+<span class="tech-metric__value">${tech.emissionsImpact}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">Cost</span>
+<span class="tech-metric__value">${tech.cost}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">ROI</span>
+<span class="tech-metric__value">${tech.roi}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">Risk</span>
+<span class="tech-metric__value">${tech.risk}</span>
+</div>
+</div>
     `;
-    
+ 
+    // allow keyboard focus & accessible label
+    techCard.tabIndex = 0;
+    techCard.setAttribute('role', 'button');
+    techCard.setAttribute('aria-label', `${tech.name}, ${tech.category}, TRL ${tech.trl}`);
+ 
     container.appendChild(techCard);
   });
 }
@@ -591,45 +646,32 @@ function createMaturityChart() {
   }));
   
   charts.maturityChart = new Chart(ctx, {
-    type: 'scatter',
+    type: 'radar',
     data: {
+      labels: ['Waste Heat (TRL 9)', 'Electrification (TRL 9)', 'Leak Detection (TRL 8)', 'Digital Twin (TRL 8)', 'Carbon Capture (TRL 8)', 'Subsea (TRL 7)', 'Floating Wind (TRL 7)', 'Green H2 (TRL 6)'],
       datasets: [{
-        label: 'Current Technologies',
-        data: techData,
-        backgroundColor: '#1FB8CD',
-        borderColor: '#5D878F',
-        pointRadius: 8,
-        pointHoverRadius: 12
+        label: 'Technology Readiness Level',
+        data: [9, 9, 8, 8, 8, 7, 7, 6],
+        backgroundColor: 'rgba(31, 184, 205, 0.2)',
+        borderColor: '#1FB8CD',
+        pointBackgroundColor: '#1FB8CD'
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'Technology Readiness Level (TRL)'
-          },
-          min: 1,
-          max: 10
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'AI Confidence Score (%)'
-          },
-          min: 0,
-          max: 100
+      plugins: {
+        title: {
+          display: true,
+          text: 'Technology Maturity Assessment'
         }
       },
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const point = context.parsed;
-              return `${context.dataset.data[context.dataIndex].label}: TRL ${point.x}, ${point.y}% confidence`;
-            }
+      scales: {
+        r: {
+          min: 0,
+          max: 10,
+          ticks: {
+            stepSize: 1
           }
         }
       }
@@ -701,68 +743,176 @@ function createScenarioChart() {
 
 // Drag and Drop functionality
 function initializeDragAndDrop() {
+
+  // Reset any globals
+
+  draggedTech = null;
+ 
+  // handle dragstart consistently from the nearest .tech-card
+
   document.addEventListener('dragstart', function(e) {
-    if (e.target.classList.contains('tech-card')) {
-      draggedTech = enterpriseData.technologyLibrary.find(t => t.id == e.target.dataset.techId);
-      e.target.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
+
+    const card = e.target.closest && e.target.closest('.tech-card');
+
+    if (!card) return;
+ 
+    const techId = card.dataset && card.dataset.techId;
+
+    if (!techId) return;
+ 
+    // prefer storing id in dataTransfer
+
+    try {
+
+      e.dataTransfer.setData('text/plain', String(techId));
+
+    } catch (err) {
+
+      // ignore - fallback to global var
+
     }
+ 
+    draggedTech = enterpriseData.technologyLibrary.find(t => String(t.id) === String(techId));
+
+    card.classList.add('dragging');
+
+    e.dataTransfer.effectAllowed = 'move';
+
   });
-  
+ 
   document.addEventListener('dragend', function(e) {
-    if (e.target.classList.contains('tech-card')) {
-      e.target.classList.remove('dragging');
-      draggedTech = null;
-    }
+
+    const card = e.target.closest && e.target.closest('.tech-card');
+
+    if (card) card.classList.remove('dragging');
+
+    // keep draggedTech until drop handler clears it
+
   });
-  
+ 
+  // Make dropzones accept drops
+
   const dropzones = document.querySelectorAll('.phase-dropzone');
+
   dropzones.forEach(zone => {
+
     zone.addEventListener('dragover', function(e) {
+
       e.preventDefault();
+
       this.classList.add('drag-over');
+
+      e.dataTransfer.dropEffect = 'move';
+
     });
-    
+ 
     zone.addEventListener('dragleave', function(e) {
+
       if (!this.contains(e.relatedTarget)) {
+
         this.classList.remove('drag-over');
+
       }
+
     });
-    
+ 
     zone.addEventListener('drop', function(e) {
+
       e.preventDefault();
+
       this.classList.remove('drag-over');
-      
-      if (draggedTech) {
-        const phase = this.id.replace('Zone', '').replace(/([A-Z])/g, '-$1').toLowerCase();
-        addTechnologyToRoadmap(draggedTech, phase, this);
+ 
+      // Prefer explicit dataTransfer id, fallback to global draggedTech
+
+      let idFromDT = null;
+
+      try { idFromDT = e.dataTransfer.getData('text/plain') || null; } catch (err) { idFromDT = null; }
+ 
+      let tech = null;
+
+      if (idFromDT) {
+
+        tech = enterpriseData.technologyLibrary.find(t => String(t.id) === String(idFromDT));
+
       }
+
+      if (!tech && draggedTech) tech = draggedTech;
+ 
+      if (!tech) {
+
+        // nothing to place
+
+        console.warn('Drop received but no tech identified');
+
+        draggedTech = null;
+
+        return;
+
+      }
+ 
+      // Determine target phase robustly
+
+      const targetPhase = getPhaseFromZoneElement(this);
+
+      if (!targetPhase) {
+
+        console.warn('Drop target phase could not be determined for:', this);
+
+        draggedTech = null;
+
+        return;
+
+      }
+ 
+      // Finally add/move the tech into the target phase
+
+      addTechnologyToRoadmap(tech, targetPhase, this);
+ 
+      // clear transient drag state
+
+      draggedTech = null;
+
     });
+
   });
+
 }
+ 
 
 function addTechnologyToRoadmap(tech, phase, dropzone) {
-  // Check if already added
-  if (roadmapTechnologies[phase] && roadmapTechnologies[phase].find(t => t.id === tech.id)) {
+  if (!tech) return;
+  const validPhase = phase || getPhaseFromZoneElement(dropzone);
+  if (!validPhase) {
+    console.warn('Unknown target phase for drop', dropzone, phase);
     return;
   }
-  
-  if (!roadmapTechnologies[phase]) {
-    roadmapTechnologies[phase] = [];
+ 
+  // Remove tech from any other phase first (ensures single-location invariant)
+  Object.keys(placedTechnologies).forEach(p => {
+    placedTechnologies[p] = (placedTechnologies[p] || []).filter(t => String(t.id) !== String(tech.id));
+  });
+ 
+  // Add to target phase (if not already there)
+  if (!placedTechnologies[validPhase]) placedTechnologies[validPhase] = [];
+  if (!placedTechnologies[validPhase].find(t => String(t.id) === String(tech.id))) {
+    placedTechnologies[validPhase].push(tech);
   }
-  
-  roadmapTechnologies[phase].push(tech);
-  
-  const techElement = document.createElement('div');
-  techElement.className = 'dropped-tech';
-  techElement.innerHTML = `
-    <strong>${tech.name}</strong>
-    <small>${tech.category} • ${tech.emissionsImpact} • ${tech.confidence}% confidence</small>
-  `;
-  
-  dropzone.appendChild(techElement);
-  
-  // Update phase metrics
+ 
+  // Keep roadmapTechnologies in sync (if used)
+  if (!roadmapTechnologies[validPhase]) roadmapTechnologies[validPhase] = [];
+  if (!roadmapTechnologies[validPhase].find(t => String(t.id) === String(tech.id))) {
+    roadmapTechnologies[validPhase].push(tech);
+  }
+ 
+  // Re-render using the improved UI
+  renderPlacedTechnologies();
+ 
+  // small visual feedback: briefly flash the dropzone
+  if (dropzone && dropzone.classList) {
+    dropzone.classList.add('just-dropped');
+    setTimeout(() => dropzone.classList.remove('just-dropped'), 420);
+  }
+ 
   updatePhaseMetrics();
 }
 
@@ -1041,6 +1191,156 @@ function showTab(tabId) {
   }
 }
 
+function getPhaseFromZoneElement(zoneEl) {
+  if (!zoneEl) return null;
+ 
+  // 1) Prefer explicit data attribute on the zone: <div class="phase-dropzone" data-phase="short-term">
+  const ds = zoneEl.dataset && zoneEl.dataset.phase;
+  if (ds) return ds;
+ 
+  // 2) Try common id patterns (normalize to 'short-term' | 'medium-term' | 'long-term')
+  const id = zoneEl.id || '';
+  if (!id) return null;
+  const normalized = id.toLowerCase();
+ 
+  // common canonical names
+  const mapCandidates = [
+    {pattern: /short/, key: 'short-term'},
+    {pattern: /medium/, key: 'medium-term'},
+    {pattern: /long/, key: 'long-term'}
+  ];
+ 
+  for (const cand of mapCandidates) {
+    if (cand.pattern.test(normalized)) return cand.key;
+  }
+ 
+  // 3) fallback to checking parent nodes for a phase hint (rare)
+  let parent = zoneEl.parentElement;
+  while (parent) {
+    if (parent.dataset && parent.dataset.phase) return parent.dataset.phase;
+    parent = parent.parentElement;
+  }
+ 
+  return null;
+}
+
+function renderPlacedTechnologies() {
+  const dropzones = document.querySelectorAll('.phase-dropzone');
+  if (!dropzones || dropzones.length === 0) return;
+ 
+  dropzones.forEach(zone => {
+    // Clean zone content (but keep zone header if any — assume zone only contains tech cards)
+    zone.innerHTML = '';
+ 
+    const phase = zone.id.replace('Zone', '').replace(/([A-Z])/g, '-$1').toLowerCase();
+    const items = placedTechnologies[phase] || [];
+ 
+    items.forEach(tech => {
+      const techCard = document.createElement('div');
+      techCard.className = 'tech-card placed';
+      techCard.setAttribute('draggable', 'true');
+      techCard.dataset.techId = tech.id;
+ 
+      techCard.innerHTML = `
+<div class="tech-card__header">
+<h4 class="tech-card__title">${tech.name}</h4>
+<span class="tech-card__trl">TRL ${tech.trl}</span>
+</div>
+<div class="tech-card__category">${tech.category}</div>
+<div class="tech-card__description">${tech.description}</div>
+<div class="tech-card__metrics">
+<div class="tech-metric">
+<span class="tech-metric__label">Impact</span>
+<span class="tech-metric__value">${tech.emissionsImpact}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">Cost</span>
+<span class="tech-metric__value">${tech.cost}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">ROI</span>
+<span class="tech-metric__value">${tech.roi}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">Risk</span>
+<span class="tech-metric__value">${tech.risk}</span>
+</div>
+</div>
+      `;
+ 
+      // remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'tech-card__remove';
+      removeBtn.title = 'Remove';
+      removeBtn.innerText = '✕';
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        removeTechnology(tech.id);
+      });
+ 
+      techCard.appendChild(removeBtn);
+      zone.appendChild(techCard);
+    });
+  });
+}function renderPlacedTechnologies() {
+  const dropzones = document.querySelectorAll('.phase-dropzone');
+  if (!dropzones || dropzones.length === 0) return;
+ 
+  dropzones.forEach(zone => {
+    // Clean zone content (but keep zone header if any — assume zone only contains tech cards)
+    zone.innerHTML = '';
+ 
+    const phase = zone.id.replace('Zone', '').replace(/([A-Z])/g, '-$1').toLowerCase();
+    const items = placedTechnologies[phase] || [];
+ 
+    items.forEach(tech => {
+      const techCard = document.createElement('div');
+      techCard.className = 'tech-card placed';
+      techCard.setAttribute('draggable', 'true');
+      techCard.dataset.techId = tech.id;
+ 
+      techCard.innerHTML = `
+<div class="tech-card__header">
+<h4 class="tech-card__title">${tech.name}</h4>
+<span class="tech-card__trl">TRL ${tech.trl}</span>
+</div>
+<div class="tech-card__category">${tech.category}</div>
+<div class="tech-card__description">${tech.description}</div>
+<div class="tech-card__metrics">
+<div class="tech-metric">
+<span class="tech-metric__label">Impact</span>
+<span class="tech-metric__value">${tech.emissionsImpact}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">Cost</span>
+<span class="tech-metric__value">${tech.cost}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">ROI</span>
+<span class="tech-metric__value">${tech.roi}</span>
+</div>
+<div class="tech-metric">
+<span class="tech-metric__label">Risk</span>
+<span class="tech-metric__value">${tech.risk}</span>
+</div>
+</div>
+      `;
+ 
+      // remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'tech-card__remove';
+      removeBtn.title = 'Remove';
+      removeBtn.innerText = '✕';
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        removeTechnology(tech.id);
+      });
+ 
+      techCard.appendChild(removeBtn);
+      zone.appendChild(techCard);
+    });
+  });
+}
 
 // Enterprise Action Functions
 function optimizeTrajectory() {
@@ -1054,21 +1354,185 @@ function runPredictiveAnalysis() {
 function runGapAnalysis() {
   setTimeout(() => {
     alert('✅ Gap Analysis Complete\n\nCritical findings:\n• Methane monitoring capability gap\n• Offshore hydrogen infrastructure missing\n• Carbon accounting system needs upgrade\n\nRecommended priority technologies identified and ranked by impact/feasibility score.');
-  }, 2000);
+  }, 100);
 }
 
 function generateTechMatching() {
   setTimeout(() => {
     alert('🎯 AI Technology Matching Complete\n\nTop 3 matches for your operational profile:\n\n1. Platform Electrification (95% match)\n2. Advanced Leak Detection (92% match) \n3. Digital Twin Integration (89% match)\n\nDetailed technology specs and vendor recommendations have been generated.');
-  }, 1500);
+  }, 100);
 }
 
 function aiOptimizeRoadmap() {
-  alert('🧠 AI Roadmap Optimization\n\nAnalyzing dependencies, resource constraints, and market timing...\n\nOptimized sequence:\n• Move Digital Twin to Phase 1 (enables other tech)\n• Parallel electrification and leak detection\n• Optimize CCS timing for max subsidies\n\nProjected improvement: +12% efficiency, -£67M costs');
+  // Clear existing placements
+  placedTechnologies = {
+    'short-term': [],
+    'medium-term': [],
+    'long-term': []
+  };
+  // Optimal technology placement based on timeline and risk
+  const shortTerm = [1, 6, 7]; // Leak Detection, Digital Twin, Waste Heat
+  const mediumTerm = [2, 3, 8]; // Platform Electrification, Carbon Capture, Subsea
+  const longTerm = [4, 5]; // Floating Wind, Green Hydrogen
+  // Place technologies with animation
+  setTimeout(() => {
+    shortTerm.forEach(id => {
+      const tech = enterpriseData.technologyLibrary.find(t => t.id === id);
+      if (tech) placedTechnologies['short-term'].push(tech);
+    });
+    renderPlacedTechnologies();
+    updatePhaseMetrics();
+  }, 200);
+  setTimeout(() => {
+    mediumTerm.forEach(id => {
+      const tech = enterpriseData.technologyLibrary.find(t => t.id === id);
+      if (tech) placedTechnologies['medium-term'].push(tech);
+    });
+    renderPlacedTechnologies();
+    updatePhaseMetrics();
+  }, 600);
+  setTimeout(() => {
+    longTerm.forEach(id => {
+      const tech = enterpriseData.technologyLibrary.find(t => t.id === id);
+      if (tech) placedTechnologies['long-term'].push(tech);
+    });
+    renderPlacedTechnologies();
+    updatePhaseMetrics();
+  }, 1000);
 }
 
 function validateRoadmap() {
-  alert('✅ Roadmap Validation Complete\n\nDependency Analysis:\n• 3 critical path conflicts resolved\n• Resource leveling optimized\n• Risk mitigation strategies updated\n\nOverall roadmap feasibility: 87%\nRecommended adjustments: 4');
+  // Build list of placed techs (flatten placedTechnologies)
+  const placed = [];
+  Object.keys(placedTechnologies).forEach(phase => {
+    (placedTechnologies[phase] || []).forEach(t => {
+      // clone with phase metadata
+      placed.push(Object.assign({}, t, { placedPhase: phase }));
+    });
+  });
+ 
+  // Build quick lookup by id for placed
+  const placedById = {};
+  placed.forEach(t => placedById[String(t.id)] = t);
+ 
+  // For validation we need both: placed techs and their declared dependencies
+  // Build full graph nodes including dependencies (even if not placed) to detect cycles
+  // We'll build graph based on enterpriseData.technologyLibrary (all known techs)
+  const allRelevantTechs = enterpriseData.technologyLibrary.slice(); // all known techs
+ 
+  const graphObj = buildDependencyGraph(allRelevantTechs);
+ 
+  // Topological sort & cycle detection on the full dependency graph (for known techs)
+  const topo = topoSort(graphObj);
+ 
+  const issues = { missingPrereqs: [], phaseProblems: [], cycles: [] };
+ 
+  if (topo.hasCycle) {
+    issues.cycles = topo.cycleNodes; // node ids that are part of cycles
+  }
+ 
+  // Check missing prereqs and phase ordering for placed technologies
+  placed.forEach(t => {
+    (t.dependencies || []).forEach(depId => {
+      const depIdStr = String(depId);
+      const depPlaced = placedById[depIdStr];
+      if (!depPlaced) {
+        // missing prerequisite (not placed in any phase)
+        const existing = issues.missingPrereqs.find(e => String(e.techId) === String(t.id));
+        if (!existing) issues.missingPrereqs.push({ techId: String(t.id), missing: [depIdStr] });
+        else existing.missing.push(depIdStr);
+      } else {
+        // check phase ordering: prereq should be same or earlier phase than the dependent
+        const techPhaseRank = phaseRank(t.placedPhase);
+        const prereqPhaseRank = phaseRank(depPlaced.placedPhase);
+        if (prereqPhaseRank > techPhaseRank) {
+          issues.phaseProblems.push({
+            techId: String(t.id),
+            prereqId: depIdStr,
+            techPhase: t.placedPhase,
+            prereqPhase: depPlaced.placedPhase
+          });
+        }
+      }
+    });
+  });
+ 
+  // Mark UI badges for problems
+  markDependencyIssues(issues);
+ 
+  // Compute recommended ordering for placed technologies (topo order but restricted to placed items)
+  // Get topo.order filtered for placed ids (if no cycle)
+  let recommendedOrder = [];
+  if (!topo.hasCycle) {
+    const placedIds = new Set(placed.map(t => String(t.id)));
+    recommendedOrder = topo.order.filter(id => placedIds.has(String(id)));
+  } else {
+    // If cycle exists, attempt a partial topo using only placed nodes (Kahn on induced subgraph)
+    // Build induced graph for placed nodes
+    const inducedGraph = { graph: {}, nodes: new Set() };
+    placed.forEach(t => {
+      inducedGraph.graph[String(t.id)] = [];
+      inducedGraph.nodes.add(String(t.id));
+    });
+    placed.forEach(t => {
+      (t.dependencies || []).forEach(dep => {
+        if (String(dep) in inducedGraph.graph) {
+          // edge dep -> t
+          inducedGraph.graph[String(dep)].push(String(t.id));
+        }
+      });
+    });
+    const partialTopo = topoSort(inducedGraph);
+    recommendedOrder = partialTopo.order;
+  }
+ 
+  // Build textual report
+  const lines = [];
+  lines.push('Roadmap Dependency Validation Report');
+  lines.push('------------------------------------');
+  if (issues.cycles && issues.cycles.length) {
+    lines.push(`Dependency cycles detected among: ${issues.cycles.join(', ')}`);
+    lines.push('Please inspect and break the cycles by removing one or more prerequisites.');
+  } else {
+    lines.push('No cycles detected.');
+  }
+ 
+  if (issues.missingPrereqs.length) {
+    lines.push('');
+    lines.push('Missing prerequisites:');
+    issues.missingPrereqs.forEach(entry => {
+      const tech = enterpriseData.technologyLibrary.find(x => String(x.id) === String(entry.techId));
+      const names = (entry.missing || []).map(id => {
+        const t = enterpriseData.technologyLibrary.find(x => String(x.id) === String(id));
+        return t ? `${t.name} (id ${id})` : `id ${id}`;
+      }).join(', ');
+      lines.push(`• ${tech ? tech.name : `id ${entry.techId}`} is missing: ${names}`);
+    });
+  } else {
+    lines.push('No missing prerequisites for placed technologies.');
+  }
+ 
+  if (issues.phaseProblems.length) {
+    lines.push('');
+    lines.push('Phase ordering issues (prereq placed in later phase):');
+    issues.phaseProblems.forEach(p => {
+      const tech = enterpriseData.technologyLibrary.find(x => String(x.id) === String(p.techId));
+      const prereq = enterpriseData.technologyLibrary.find(x => String(x.id) === String(p.prereqId));
+      lines.push(`• ${tech ? tech.name : p.techId} (in ${p.techPhase}) depends on ${prereq ? prereq.name : p.prereqId} (in ${p.prereqPhase})`);
+    });
+  } else {
+    lines.push('No phase ordering issues found.');
+  }
+ 
+  lines.push('');
+  lines.push('Recommended execution order for placed technologies (by id):');
+  lines.push(recommendedOrder.length ? recommendedOrder.join(' -> ') : '(none)');
+ 
+  // Show the report (simple alert for now)
+  showDependencyReport(lines.join('\n'), issues, recommendedOrder);
+ 
+  // return issues object if caller wants to handle programmatically
+  return { issues, recommendedOrder, rawTopo: topo };
 }
 
 function createNewScenario() {
@@ -1082,7 +1546,7 @@ function compareScenarios() {
 function runMonteCarloAnalysis() {
   setTimeout(() => {
     alert('🎲 Monte Carlo Analysis Complete\n\n10,000 simulation runs:\n\nCost Range: £1.2B - £2.1B (90% confidence)\nEmissions Reduction: 52% - 74%\nSuccess Probability: 87%\n\nKey Risk Factors:\n• Regulatory delays (34% impact)\n• Technology maturity (28% impact)\n• Market conditions (21% impact)');
-  }, 3000);
+  }, 100);
 }
 
 function bookConsultation(expertId) {
@@ -1134,6 +1598,540 @@ function filterTechnologies() {
   renderTechnologyLibrary(filteredTechs);
 }
 
+// Roadmap System
+function initializeRoadmap() {
+
+  const aiOptimizeBtn = document.getElementById('ai-optimize');
+
+  const clearRoadmapBtn = document.getElementById('clear-roadmap');
+ 
+  if (aiOptimizeBtn) aiOptimizeBtn.addEventListener('click', aiOptimizeRoadmap);
+
+  if (clearRoadmapBtn) clearRoadmapBtn.addEventListener('click', clearRoadmap);
+ 
+  // Create a "Clear all" button in the roadmap toolbar if it doesn't exist
+
+  const roadmapToolbar = document.getElementById('roadmapToolbar') || document.querySelector('.roadmap-toolbar');
+
+  if (roadmapToolbar && !document.getElementById('clear-all-placed')) {
+
+    const btn = document.createElement('button');
+
+    btn.id = 'clear-all-placed';
+
+    btn.className = 'btn btn--danger';
+
+    btn.innerText = 'Clear all placed';
+
+    btn.style.marginLeft = '8px';
+
+    btn.addEventListener('click', () => {
+
+      // clear placed technologies and re-render both roadmap and tech library
+
+      placedTechnologies = { 'short-term': [], 'medium-term': [], 'long-term': [] };
+
+      renderPlacedTechnologies();
+
+      updatePhaseMetrics();
+
+    });
+
+    roadmapToolbar.appendChild(btn);
+
+  }
+ 
+  // Initialize drag and drop (again, safe to call)
+
+  setTimeout(initializeDragAndDrop, 100);
+
+}
+ 
+
+function aiOptimizeRoadmap() {
+  // Clear existing placements
+  placedTechnologies = {
+    'short-term': [],
+    'medium-term': [],
+    'long-term': []
+  };
+  
+  // Optimal technology placement based on timeline and risk
+  const shortTerm = [1, 6, 7]; // Leak Detection, Digital Twin, Waste Heat
+  const mediumTerm = [2, 3, 8]; // Platform Electrification, Carbon Capture, Subsea
+  const longTerm = [4, 5]; // Floating Wind, Green Hydrogen
+  
+  // Place technologies with animation
+  setTimeout(() => {
+    shortTerm.forEach(id => {
+      const tech = enterpriseData.technologyLibrary.find(t => t.id === id);
+      if (tech) placedTechnologies['short-term'].push(tech);
+    });
+    renderPlacedTechnologies();
+    updatePhaseMetrics();
+  }, 200);
+  
+  setTimeout(() => {
+    mediumTerm.forEach(id => {
+      const tech = enterpriseData.technologyLibrary.find(t => t.id === id);
+      if (tech) placedTechnologies['medium-term'].push(tech);
+    });
+    renderPlacedTechnologies();
+    updatePhaseMetrics();
+  }, 600);
+  
+  setTimeout(() => {
+    longTerm.forEach(id => {
+      const tech = enterpriseData.technologyLibrary.find(t => t.id === id);
+      if (tech) placedTechnologies['long-term'].push(tech);
+    });
+    renderPlacedTechnologies();
+    updatePhaseMetrics();
+  }, 1000);
+}
+
+function clearRoadmap() {
+  placedTechnologies = {
+    'short-term': [],
+    'medium-term': [],
+    'long-term': []
+  };
+  renderPlacedTechnologies();
+  updatePhaseMetrics();
+}
+
+function removeTechnology(techId) {
+  let removed = false;
+
+  Object.keys(placedTechnologies).forEach(phase => {
+
+    const beforeLen = placedTechnologies[phase].length;
+
+    placedTechnologies[phase] = placedTechnologies[phase].filter(t => String(t.id) !== String(techId));
+
+    if (placedTechnologies[phase].length !== beforeLen) removed = true;
+
+  });
+ 
+  // Also remove from roadmapTechnologies if you use that structure
+
+  Object.keys(roadmapTechnologies).forEach(phase => {
+
+    roadmapTechnologies[phase] = (roadmapTechnologies[phase] || []).filter(t => String(t.id) !== String(techId));
+
+  });
+ 
+  if (removed) {
+
+    renderPlacedTechnologies();
+
+    updatePhaseMetrics();
+
+  }
+
+}
+
+function buildDependencyGraph(techList) {
+  // techList: array of tech objects to include in graph (typically all placed techs)
+  const graph = {};        // nodeId -> list of dependent nodeIds (edges node -> neighbors)
+  const nodes = new Set();
+ 
+  techList.forEach(t => {
+    nodes.add(String(t.id));
+    graph[String(t.id)] = (graph[String(t.id)] || []).slice(); // ensure present
+  });
+ 
+  // Add edges from prereq -> tech (prereq must come before tech)
+  techList.forEach(t => {
+    const tid = String(t.id);
+    (t.dependencies || []).forEach(depId => {
+      const dep = String(depId);
+      // if dep is in the graph (only concerned with declared prerequisites that are relevant),
+      // still add the node even if the dep isn't placed — we'll detect missing prereqs separately.
+      if (!graph[dep]) graph[dep] = [];
+      graph[dep].push(tid);
+      nodes.add(dep);
+    });
+  });
+ 
+  return { graph, nodes };
+}
+
+function topoSort(graphObj) {
+  const graph = graphObj.graph;
+  const nodes = Array.from(new Set(Object.keys(graph)));
+  // compute indegree
+  const indegree = {};
+  nodes.forEach(n => indegree[n] = 0);
+  for (const u of nodes) {
+    (graph[u] || []).forEach(v => {
+      indegree[v] = (indegree[v] || 0) + 1;
+    });
+  }
+  // queue of nodes with indegree 0
+  const queue = nodes.filter(n => indegree[n] === 0);
+  const order = [];
+ 
+  while (queue.length) {
+    const n = queue.shift();
+    order.push(n);
+    (graph[n] || []).forEach(m => {
+      indegree[m] = indegree[m] - 1;
+      if (indegree[m] === 0) queue.push(m);
+    });
+  }
+ 
+  const hasCycle = order.length !== nodes.length;
+  const cycleNodes = hasCycle ? nodes.filter(n => !order.includes(n)) : [];
+ 
+  return { order, hasCycle, cycleNodes };
+}
+
+function phaseRank(phaseKey) {
+  // 'short-term' -> 0, 'medium-term' -> 1, 'long-term' -> 2
+  if (!phaseKey) return 99;
+  const map = { 'short-term': 0, 'shortterm': 0, 'short': 0, 'medium-term': 1, 'mediumterm': 1, 'medium': 1, 'long-term': 2, 'longterm': 2, 'long': 2 };
+  return map[String(phaseKey).toLowerCase()] ?? 99;
+}
+
+function markDependencyIssues(issues) {
+  // issues: { missingPrereqs: [{techId, missing: [ids]}], phaseProblems: [{techId, prereqId, techPhase, prereqPhase}], cycles: [...] }
+  // clear existing badges
+  document.querySelectorAll('.tech-card .tech-card__badge, .tech-card.dependency-warning').forEach(el => {
+    // remove badge node or dependency-warning class
+    const parent = el.closest && el.closest('.tech-card');
+    if (parent) parent.classList.remove('dependency-warning');
+    if (el.parentNode) el.parentNode.removeChild(el);
+  });
+ 
+  // helper to attach badge
+  function attachBadgeToTech(techId, text, title) {
+    const selector = `.tech-card[data-tech-id="${techId}"]`;
+    const node = document.querySelector(selector);
+    if (!node) return;
+    node.classList.add('dependency-warning');
+    // avoid multiple badges: remove existing
+    const existing = node.querySelector('.tech-card__badge');
+    if (existing) existing.remove();
+    const badge = document.createElement('span');
+    badge.className = 'tech-card__badge';
+    badge.title = title || text;
+    badge.innerText = text;
+    node.appendChild(badge);
+  }
+ 
+  // missing prereqs
+  (issues.missingPrereqs || []).forEach(entry => {
+    attachBadgeToTech(entry.techId, 'Missing prereq', `Missing prerequisites: ${entry.missing.join(', ')}`);
+  });
+ 
+  // phase problems
+  (issues.phaseProblems || []).forEach(entry => {
+    attachBadgeToTech(entry.techId, 'Phase issue', `Prereq ${entry.prereqId} is in ${entry.prereqPhase} but ${entry.techId} is in ${entry.techPhase}`);
+  });
+ 
+  // cycles -> mark all nodes in cycle
+  (issues.cycles || []).forEach(nodeId => {
+    attachBadgeToTech(nodeId, 'Cycle', 'Dependency cycle detected');
+  });
+}
+
+/* ---------- User-facing report function (can be replaced with modal) ---------- */
+function showDependencyReport(text, issues, recommendedOrder) {
+  // For now keep simple: alert + console
+  alert(text);
+  console.log('Dependency validation result:', { text, issues, recommendedOrder });
+ 
+  // Optionally, auto-reorder placed technologies to the recommended order within each phase:
+  // (NOT enabling automatic reordering by default — but provide helper function below)
+}
+ 
+/* ---------- Optional helper: applyRecommendedOrderToPhase
+   If you want to reorder placed technologies within a phase based on the recommended global order.
+   This function is conservative: it only reorders the items inside each phase to match relative
+   order from recommendedOrder while preserving items not in recommendedOrder at the end.
+*/
+/**
+* Improved applyRecommendedOrderToPhases
+* - recommendedOrder: array of ids in topo order (global)
+* - This will reorder placedTechnologies within each phase based on the relative
+*   order of ids in recommendedOrder. Items not present in recommendedOrder remain
+*   at the end in their existing relative order.
+*/
+function applyRecommendedOrderToPhases(recommendedOrder) {
+  if (!Array.isArray(recommendedOrder) || recommendedOrder.length === 0) {
+    console.warn('applyRecommendedOrderToPhases: no recommended order provided');
+    showToast('No recommended order available', 1400);
+    return;
+  }
+ 
+  // build a quick lookup map: id -> position (lower = earlier)
+  const orderIndex = {};
+  recommendedOrder.forEach((id, idx) => orderIndex[String(id)] = idx);
+ 
+  // For debugging: capture snapshot of before state
+  const beforeSnapshot = {};
+  Object.keys(placedTechnologies).forEach(phase => {
+    beforeSnapshot[phase] = (placedTechnologies[phase] || []).map(t => String(t.id));
+  });
+  console.log('applyRecommendedOrderToPhases - before', JSON.parse(JSON.stringify(beforeSnapshot)));
+ 
+  // Reorder each phase deterministically using orderIndex.
+  Object.keys(placedTechnologies).forEach(phase => {
+    placedTechnologies[phase] = (placedTechnologies[phase] || []).slice(); // clone
+ 
+    placedTechnologies[phase].sort((a, b) => {
+      const ia = orderIndex.hasOwnProperty(String(a.id)) ? orderIndex[String(a.id)] : Number.POSITIVE_INFINITY;
+      const ib = orderIndex.hasOwnProperty(String(b.id)) ? orderIndex[String(b.id)] : Number.POSITIVE_INFINITY;
+      // If both are outside recommended order, preserve original relative order by falling back to index in 'before' snapshot
+      if (ia === ib) {
+        // stable fallback: preserve current order by comparing their index in the existing array
+        const arr = beforeSnapshot[phase] || [];
+        const ia0 = arr.indexOf(String(a.id));
+        const ib0 = arr.indexOf(String(b.id));
+        return ia0 - ib0;
+      }
+      return ia - ib;
+    });
+  });
+ 
+  // For debugging: snapshot after
+  const afterSnapshot = {};
+  Object.keys(placedTechnologies).forEach(phase => {
+    afterSnapshot[phase] = (placedTechnologies[phase] || []).map(t => String(t.id));
+  });
+  console.log('applyRecommendedOrderToPhases - after', JSON.parse(JSON.stringify(afterSnapshot)));
+ 
+  // re-render and animate: add a class to each dropzone to visually show reflow
+  renderPlacedTechnologies();
+ 
+  // briefly add a 'reflow' class to each phase zone so user sees movement
+  const zones = document.querySelectorAll('.phase-dropzone');
+  zones.forEach(z => {
+    z.classList.add('reflowing');
+    setTimeout(() => z.classList.remove('reflowing'), 450);
+  });
+ 
+  updatePhaseMetrics();
+  showToast('Applied recommended order', 1400);
+}
+
+// Create modal markup (if not already present)
+function ensureDependencyModalExists() {
+  if (document.getElementById('depReportModal')) return;
+ 
+  const modal = document.createElement('div');
+  modal.id = 'depReportModal';
+  modal.className = 'dep-modal';
+  modal.innerHTML = `
+<div class="dep-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="depReportTitle">
+<header class="dep-modal__header">
+<h3 id="depReportTitle">Dependency Validation</h3>
+<button class="dep-modal__close" id="depReportClose" aria-label="Close">✕</button>
+</header>
+<main class="dep-modal__body">
+<div id="depReportSummary" class="dep-modal__summary"></div>
+<div id="depReportDetails" class="dep-modal__details"></div>
+<div id="depReportOrder" class="dep-modal__order"></div>
+</main>
+<footer class="dep-modal__footer">
+<button id="applyRecommendedBtn" class="btn btn--primary">Apply recommended order</button>
+<button id="autoPlaceMissingBtn" class="btn btn--secondary">Auto-place missing prerequisites</button>
+<button id="depIgnoreBtn" class="btn">Close</button>
+</footer>
+</div>
+  `;
+  document.body.appendChild(modal);
+ 
+  // Wire close
+  document.getElementById('depReportClose').addEventListener('click', () => closeDepModal());
+  document.getElementById('depIgnoreBtn').addEventListener('click', () => closeDepModal());
+}
+ 
+// Open modal and populate with validator output
+function showDependencyReportModal(text, issues, recommendedOrder) {
+  ensureDependencyModalExists();
+  const modal = document.getElementById('depReportModal');
+  modal.classList.add('open');
+ 
+  // Populate summary
+  const summaryEl = document.getElementById('depReportSummary');
+  summaryEl.innerHTML = `<pre class="dep-summary-pre">${escapeHtml(text)}</pre>`;
+ 
+  // Populate details (structured)
+  const detailsEl = document.getElementById('depReportDetails');
+  detailsEl.innerHTML = ''; // clear
+ 
+  // Missing prerequisites
+  if (issues.missingPrereqs && issues.missingPrereqs.length) {
+    const box = document.createElement('div');
+    box.className = 'dep-box dep-box--missing';
+    box.innerHTML = `<h4>Missing prerequisites</h4>`;
+    issues.missingPrereqs.forEach(entry => {
+      const tech = enterpriseData.technologyLibrary.find(x => String(x.id) === String(entry.techId));
+      const names = (entry.missing || []).map(id => {
+        const t = enterpriseData.technologyLibrary.find(x => String(x.id) === String(id));
+        return t ? `${t.name} (id ${id})` : `id ${id}`;
+      }).join(', ');
+      const row = document.createElement('div');
+      row.className = 'dep-row';
+      row.innerHTML = `<strong>${tech ? tech.name : 'id ' + entry.techId}</strong> — missing: ${names}`;
+      box.appendChild(row);
+    });
+    detailsEl.appendChild(box);
+  }
+ 
+  // Phase problems
+  if (issues.phaseProblems && issues.phaseProblems.length) {
+    const box = document.createElement('div');
+    box.className = 'dep-box dep-box--phase';
+    box.innerHTML = `<h4>Phase ordering issues</h4>`;
+    issues.phaseProblems.forEach(p => {
+      const tech = enterpriseData.technologyLibrary.find(x => String(x.id) === String(p.techId));
+      const prereq = enterpriseData.technologyLibrary.find(x => String(x.id) === String(p.prereqId));
+      const row = document.createElement('div');
+      row.className = 'dep-row';
+      row.innerHTML = `<strong>${tech ? tech.name : p.techId}</strong> (in ${p.techPhase}) depends on <em>${prereq ? prereq.name : p.prereqId}</em> (in ${p.prereqPhase})`;
+      box.appendChild(row);
+    });
+    detailsEl.appendChild(box);
+  }
+ 
+  // Cycles
+  if (issues.cycles && issues.cycles.length) {
+    const box = document.createElement('div');
+    box.className = 'dep-box dep-box--cycle';
+    box.innerHTML = `<h4>Cycles detected</h4>`;
+    const ul = document.createElement('ul');
+    issues.cycles.forEach(nodeId => {
+      const t = enterpriseData.technologyLibrary.find(x => String(x.id) === String(nodeId));
+      const li = document.createElement('li');
+      li.innerText = t ? `${t.name} (id ${nodeId})` : `id ${nodeId}`;
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+    detailsEl.appendChild(box);
+  }
+ 
+  // Recommended order
+  const orderEl = document.getElementById('depReportOrder');
+  orderEl.innerHTML = `<h4>Recommended execution order</h4><div class="dep-order-list">${recommendedOrder.length ? recommendedOrder.map(id => {
+    const t = enterpriseData.technologyLibrary.find(x => String(x.id) === String(id));
+    return `<span class="dep-order-item" data-id="${id}">${t ? t.name : id}</span>`;
+  }).join(' → ') : '(none)'}</div>`;
+ 
+  // Wire buttons
+  document.getElementById('applyRecommendedBtn').onclick = function() {
+    applyRecommendedOrderToPhases(recommendedOrder);
+    // revalidate to update badges
+    const res = validateRoadmap();
+    // close
+    closeDepModal();
+    // show a quick confirmation
+    showToast('Applied recommended order');
+  };
+ 
+  document.getElementById('autoPlaceMissingBtn').onclick = function() {
+    autoPlaceMissingPrereqs(issues);
+    // after placement, revalidate and re-render
+    const res = validateRoadmap();
+    showToast('Auto-placed missing prerequisites');
+  };
+}
+ 
+// Close modal
+function closeDepModal() {
+  const modal = document.getElementById('depReportModal');
+  if (modal) modal.classList.remove('open');
+}
+ 
+// tiny helper to escape html in pre blocks
+function escapeHtml(unsafe) {
+  return unsafe.replace(/[&<"']/g, function(m) {
+    return ({ '&': '&amp;', '<': '&lt;', '"': '&quot;', "'": '&#039;' })[m];
+  });
+}
+ 
+// Toast helper (small transient message)
+function showToast(msg, timeout = 1800) {
+  let t = document.getElementById('depToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'depToast';
+    t.className = 'dep-toast';
+    document.body.appendChild(t);
+  }
+  t.innerText = msg;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), timeout);
+}
+ 
+/* ===== Auto-place missing prerequisites implementation =====
+   - For each missing prereq id, attempt to place it in:
+     1) the earliest phase of its dependent (one phase earlier if available)
+     2) fallback to 'short-term'
+   - If the prereq is unknown in enterpriseData, skip.
+*/
+function autoPlaceMissingPrereqs(issues) {
+  if (!issues || !issues.missingPrereqs || !issues.missingPrereqs.length) {
+    showToast('No missing prerequisites found', 1200);
+    return;
+  }
+ 
+  // Build map for phase order
+  const phases = ['short-term', 'medium-term', 'long-term'];
+  const phaseIndex = p => phases.indexOf(p);
+ 
+  // For each missing entry, place each missing prerequisite
+  issues.missingPrereqs.forEach(entry => {
+    const dependentId = String(entry.techId);
+    const dependentPlaced = (() => {
+      for (const p of Object.keys(placedTechnologies)) {
+        const found = (placedTechnologies[p] || []).find(t => String(t.id) === dependentId);
+        if (found) return { tech: found, phase: p };
+      }
+      return null;
+    })();
+ 
+    (entry.missing || []).forEach(mId => {
+      const missingId = String(mId);
+      const missingTech = enterpriseData.technologyLibrary.find(x => String(x.id) === missingId);
+      if (!missingTech) return;
+ 
+      // if it's already placed (race), skip
+      let alreadyPlaced = false;
+      Object.keys(placedTechnologies).forEach(p => {
+        if ((placedTechnologies[p] || []).find(t => String(t.id) === missingId)) alreadyPlaced = true;
+      });
+      if (alreadyPlaced) return;
+ 
+      // pick a target phase: prefer one earlier than dependent if dependent placed
+      let targetPhase = 'short-term';
+      if (dependentPlaced) {
+        const dIdx = phaseIndex(dependentPlaced.phase);
+        const preferIdx = Math.max(0, dIdx - 1);
+        targetPhase = phases[preferIdx] || 'short-term';
+      }
+ 
+      // finally add technology to roadmap (this will dedupe/remove duplicates)
+      addTechnologyToRoadmap(missingTech, targetPhase, document.querySelector(`[data-phase="${targetPhase}"]`) || document.querySelector(`#${targetPhase}Zone`) || null);
+    });
+  });
+ 
+  // Re-render and metrics update are handled by addTechnologyToRoadmap
+}
+ 
+/* ===== Replace the old showDependencyReport to open modal instead of alert ===== */
+function showDependencyReport(text, issues, recommendedOrder) {
+  // open modal with structured data
+  showDependencyReportModal(text, issues, recommendedOrder);
+ 
+  // also log to console as before
+  console.log('Dependency validation result (modal):', { text, issues, recommendedOrder });
+}
+
+
+
 // Make functions available globally
 window.showSection = showSection;
 window.askAI = askAI;
@@ -1143,6 +2141,7 @@ window.runPredictiveAnalysis = runPredictiveAnalysis;
 window.runGapAnalysis = runGapAnalysis;
 window.generateTechMatching = generateTechMatching;
 window.aiOptimizeRoadmap = aiOptimizeRoadmap;
+window.initializeRoadmap = initializeRoadmap;
 window.validateRoadmap = validateRoadmap;
 window.createNewScenario = createNewScenario;
 window.compareScenarios = compareScenarios;
