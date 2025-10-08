@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
       createEmissionsChart();
     }
 
-    // initializeTabs();
+    initializeTabs();
 
     console.log('Enterprise platform ready');
   }, 100);
@@ -317,6 +317,279 @@ function initializeNavigation() {
       this.classList.add('active');
     });
   });
+}
+
+// ---------- Tab system for Analytics ----------
+function initializeTabs() {
+  const tabButtons = document.querySelectorAll('.analytics-tabs .tab-btn');
+  const tabContents = document.querySelectorAll('.analytics-content .tab-content');
+ 
+  function showTab(tabName) {
+    tabContents.forEach(tc => tc.classList.remove('active'));
+    const target = document.getElementById(tabName);
+    if (target) target.classList.add('active');
+ 
+    // Lazy-create charts when tab first opened
+    if (tabName === 'overview') {
+      if (!charts.roiChart) createROIChart();
+      if (!charts.maturityChart) createMaturityChart();
+    } else if (tabName === 'performance') {
+      if (!charts.performanceChart) createPerformanceChart();
+      if (!charts.budgetChart) createBudgetChart();
+    } else if (tabName === 'predictive') {
+      if (!charts.predictiveChart) createPredictiveChart();
+    } else if (tabName === 'reports') {
+      if (!charts.reportsChart) createReportsChart();
+      createReportCards();
+    }
+  }
+ 
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tab = btn.getAttribute('data-tab');
+      // set active class on buttons
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      showTab(tab);
+    });
+  });
+ 
+  // ensure the initial active tab is created
+  const initial = document.querySelector('.analytics-tabs .tab-btn.active');
+  if (initial) showTab(initial.getAttribute('data-tab') || 'overview');
+}
+ 
+// ---------- Additional chart creators (simple, robust placeholders) ----------
+function createPerformanceChart() {
+  const ctx = document.getElementById('performanceChart');
+  if (!ctx) return;
+  charts.performanceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026','Q2 2026'],
+      datasets: [{
+        label: 'Implementation Progress (%)',
+        data: [12, 20, 31, 44, 58, 72],
+        borderColor: '#1FB8CD',
+        backgroundColor: 'rgba(31,184,205,0.08)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+ 
+function createBudgetChart() {
+  const ctx = document.getElementById('budgetChart');
+  if (!ctx) return;
+  charts.budgetChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Short', 'Medium', 'Long'],
+      datasets: [{
+        label: 'Planned (£M)',
+        data: [205, 770, 600],
+        backgroundColor: ['#1FB8CD','#FFC185','#B4413C']
+      },{
+        label: 'Actual (£M)',
+        data: [190, 680, 520],
+        backgroundColor: ['rgba(31,184,205,0.4)','rgba(255,193,133,0.4)','rgba(180,65,60,0.4)']
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+ 
+function createPredictiveChart() {
+  const ctx = document.getElementById('predictiveChart');
+  if (!ctx) return;
+  charts.predictiveChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['2025','2026','2027','2028','2029','2030'],
+      datasets: [{
+        label: 'Projected Emissions (kT CO₂e)',
+        data: [2100, 1750, 1400, 1250, 1100, 950],
+        borderColor: '#B4413C',
+        fill: false,
+        tension: 0.3
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+ 
+function createReportsChart() {
+  const ctx = document.getElementById('reportsChart');
+  if (!ctx) return;
+  charts.reportsChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Roadmaps','Assessments','Workflows','Market Intel'],
+      datasets: [{
+        data: [35, 25, 20, 20],
+        backgroundColor: ['#1FB8CD','#FFC185','#1F9E89','#B4413C']
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+window.charts = window.charts || {};
+ 
+// Call this when the 'reports' tab is shown (initializeTabs() will call it lazily)
+function createReportCards() {
+  const container = document.getElementById('reportsAccordion');
+  if (!container || container.dataset.inited) return;
+  container.dataset.inited = '1';
+ 
+  const reports = [
+    { id: 'roi', title: 'ROI Report', subtitle: 'Return on Investment analysis and highlights' },
+    { id: 'performance', title: 'Performance Summary', subtitle: 'Key progress and bottlenecks' },
+    { id: 'predictive', title: 'Predictive Insights', subtitle: 'Forecasts and risk indicators' }
+  ];
+ 
+  reports.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'report-card';
+    card.innerHTML = `
+<div class="report-header" data-report="${r.id}">
+<div style="display:flex; align-items:center;">
+<div>
+<p class="report-title">${r.title}</p>
+<p class="report-meta">${r.subtitle}</p>
+</div>
+</div>
+<button class="report-toggle" aria-expanded="false">+</button>
+</div>
+<div class="report-body" id="report-body-${r.id}">
+<div class="report-body-inner">
+<div class="report-text" id="report-text-${r.id}">Loading report...</div>
+<div style="position:relative;" class="report-chart-wrap">
+<canvas id="report-chart-${r.id}" class="report-chart"></canvas>
+</div>
+<div class="reports-cta">
+<button class="small-btn" data-action="download" data-report="${r.id}">Download PDF</button>
+<button class="small-btn" data-action="regenerate" data-report="${r.id}">Regenerate</button>
+<button class="small-btn" data-action="expand" data-report="${r.id}">Open full view</button>
+</div>
+</div>
+</div>
+    `;
+    container.appendChild(card);
+ 
+    // header click toggles
+    const header = card.querySelector('.report-header');
+    const toggleBtn = card.querySelector('.report-toggle');
+    const body = card.querySelector('.report-body');
+ 
+    header.addEventListener('click', () => {
+      const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      if (expanded) {
+        // collapse
+        toggleBtn.textContent = '+';
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        body.style.maxHeight = '0';
+        body.style.padding = '0 8px';
+      } else {
+        // expand
+        toggleBtn.textContent = '−';
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        // set a large maxHeight to allow smooth open; will be trimmed if content grows
+        body.style.maxHeight = body.scrollHeight + 20 + 'px';
+        body.style.padding = '8px';
+        // lazy-populate contents only once
+        if (!body.dataset.loaded) {
+          body.dataset.loaded = '1';
+          generateDummyReport(r.id);
+        }
+      }
+    });
+ 
+    // small action buttons
+    card.querySelectorAll('.small-btn').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const action = btn.getAttribute('data-action');
+        const rid = btn.getAttribute('data-report');
+        if (action === 'download') {
+          alert(`(placeholder) Downloading PDF for ${rid}...`);
+        } else if (action === 'regenerate') {
+          // re-generate dummy content (simulate AI regen)
+          generateDummyReport(rid, { regen: true });
+        } else if (action === 'expand') {
+          // open full view — placeholder
+          alert(`(placeholder) Open full ${rid} report (future: full PDF / AI page).`);
+        }
+      });
+    });
+  });
+}
+ 
+// Create / populate dummy report content + draw a small chart
+function generateDummyReport(reportId, opts = {}) {
+  const textEl = document.getElementById(`report-text-${reportId}`);
+  const canvasId = `report-chart-${reportId}`;
+  if (!textEl) return;
+ 
+  // Dummy AI-like summary text per report
+  const summaries = {
+    roi: `Summary (ROI): The current investment shows positive trends driven by early cost savings and process automation. Projected 3-year ROI is ~18–22%. Recommendations: prioritize pilot scaling, monitor integration costs, and revisit vendor contracts.`,
+    performance: `Summary (Performance): Implementation progress is steady; two modules are delayed by dependency issues. Action items: reallocate two engineers to backlog items and refine sprint scope to clear the critical path.`,
+    predictive: `Summary (Predictive): Forecast models show a likely 12% reduction in emissions under current measures; additional optimizations could further reduce emissions by 6–9%. Risk: data quality gaps for Q4 may reduce confidence intervals.`
+  };
+ 
+  // populate text (if regen, prepend an indicator)
+  const regenPrefix = opts.regen ? 'Regenerated summary — ' : '';
+  textEl.textContent = regenPrefix + (summaries[reportId] || 'No summary available.');
+ 
+  // draw a small chart to visually represent something for this report
+  const ctx = document.getElementById(canvasId);
+  if (!ctx) return;
+ 
+  // If a chart already exists for this report, update it
+  if (charts[`report_${reportId}_chart`]) {
+    try {
+      charts[`report_${reportId}_chart`].data.datasets[0].data = getDummySeriesForReport(reportId);
+      charts[`report_${reportId}_chart`].update();
+      return;
+    } catch (e) {
+      console.warn('Failed to update existing chart', e);
+    }
+  }
+ 
+  // Create a small compact chart
+  charts[`report_${reportId}_chart`] = new Chart(ctx, {
+    type: reportId === 'performance' ? 'bar' : 'line',
+    data: {
+      labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+      datasets: [{
+        label: reportId === 'roi' ? 'Projected ROI (%)' : (reportId === 'performance' ? 'Throughput' : 'Projection'),
+        data: getDummySeriesForReport(reportId),
+        fill: reportId !== 'performance',
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { display: true, ticks: { maxRotation: 0 } },
+        y: { display: true, beginAtZero: true }
+      }
+    }
+  });
+}
+ 
+// helper: small dummy numeric series per report
+function getDummySeriesForReport(reportId) {
+  if (reportId === 'roi') return [1.2, 2.5, 4.1, 7.6, 11.8, 18.0];
+  if (reportId === 'performance') return [40, 55, 60, 70, 85, 92];
+  if (reportId === 'predictive') return [2100, 1950, 1800, 1600, 1450, 1300];
+  return [10,20,30,40,50,60];
 }
 
 function showSection(sectionId) {
