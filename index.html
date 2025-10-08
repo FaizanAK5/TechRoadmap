@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NZTC Enterprise Platform - Net Zero Technology Roadmapping</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <h2>NZTC Enterprise</h2>
+                    <div class="enterprise-badge">Enterprise</div>
+                </div>
+                <nav class="header__nav">
+                    <a href="#" class="nav-link active" data-section="dashboard">Dashboard</a>
+                    <a href="#" class="nav-link" data-section="assessment">Assessment</a>
+                    <a href="#" class="nav-link" data-section="roadmap">Roadmap</a>
+                    <a href="#" class="nav-link" data-section="collaboration">Collaboration</a>
+                    <a href="#" class="nav-link" data-section="scenarios">Scenarios</a>
+                    <a href="#" class="nav-link" data-section="ai-assistant">AI Assistant</a>
+                    <a href="#" class="nav-link" data-section="intelligence">Intelligence</a>
+                    <a href="#" class="nav-link" data-section="analytics">Analytics</a>
+                    <a href="#" class="nav-link" data-section="expert">Expert</a>
+                    <a href="#" class="nav-link" data-section="integrations">Integrations</a>
+                </nav>
+                <div class="header__profile">
+                    <div class="profile-info">
+                        <div class="profile-name">Faizan Abbas</div>
+                        <div class="profile-role">Head of Something</div>
+                        <div class="profile-company">FaiziTech</div>
+                    </div>
+                    <div class="profile-avatar">FA</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section__header">
+                    <h1>Enterprise Dashboard</h1>
+                    <p>Complete visibility into your net zero transformation</p>
+                </div>
+
+                <div class="dashboard-metrics">
+                    <div class="metrics-grid">
+                        <div class="metric-card primary">
+                            <div class="metric-icon"><i data-feather="target"></i></div>
+                            <div class="metric-content">
+                                <h3>Current Emissions</h3>
+                                <div class="metric-value">2.5M</div>
+                                <div class="metric-unit">tonnes CO₂/year</div>
+                                <div class="metric-trend">
+                                    <span class="trend-icon"><i data-feather="trending-down"></i></span>
+                                    28% progress to 2030 target
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card success">
+                            <div class="metric-icon"><i data-feather="dollar-sign"></i></div>
+                            <div class="metric-content">
+                                <h3>ROI Achieved</h3>
+                                <div class="metric-value">£12.3M</div>
+                                <div class="metric-unit">saved this year</div>
+                                <div class="metric-trend">
+                                    <span class="trend-icon"><i data-feather="trending-up"></i></span>
+                                    18% above target
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card warning">
+                            <div class="metric-icon"><i data-feather="cloud-lightning"></i></div>
+                            <div class="metric-content">
+                                <h3>Active Technologies</h3>
+                                <div class="metric-value">12</div>
+                                <div class="metric-unit">in roadmap</div>
+                                <div class="metric-trend">
+                                    <span class="trend-icon"><i data-feather="cpu"></i></span>
+                                    3 roadmaps active
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card info">
+                            <div class="metric-icon"><i data-feather="users"></i></div>
+                            <div class="metric-content">
+                                <h3>Team Members</h3>
+                                <div class="metric-value">15</div>
+                                <div class="metric-unit">collaborating</div>
+                                <div class="metric-trend">
+                                    <span class="trend-icon"><i data-feather="message-square"></i></span>
+                                    24 active discussions
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-content">
+                    <div class="chart-section">
+                        <div class="chart-container">
+                            <h3>Emissions Reduction Progress</h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="emissionsChart"></canvas>
+                            </div>
+                            <div class="chart-actions">
+                                <button class="btn btn--secondary" onclick="optimizeTrajectory()">AI Optimize</button>
+                                <button class="btn btn--outline" onclick="runPredictiveAnalysis()">Predictive Analysis</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insights-panel">
+                        <h3>AI-Powered Insights</h3>
+                        <div class="insights-list" id="aiInsights">
+                            <!-- Insights will be populated by JavaScript -->
+                        </div>
+                        <div class="competitive-alerts">
+                            <h4>Market Intelligence</h4>
+                            <div class="alert-item">
+                                <span class="alert-icon">🚨</span>
+                                <div class="alert-content">
+                                    <strong>Shell CCS Investment</strong>
+                                    <p>£2B North Sea project announced. Potential partnership opportunity.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technology Assessment Section -->
+            <section id="assessment" class="section">
+                <div class="section__header">
+                    <h1>Technology Assessment</h1>
+                    <p>AI-powered gap analysis and technology matching</p>
+                </div>
+
+                <div class="assessment-layout">
+                    <div class="assessment-form">
+                        <div class="form-section">
+                            <h3>Operational Profile</h3>
+                            <div class="profile-summary">
+                                <div class="profile-stat">
+                                    <label>Platform Count</label>
+                                    <div class="stat-value">4</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <label>Processing Facilities</label>
+                                    <div class="stat-value">2</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <label>Annual Production</label>
+                                    <div class="stat-value">150M</div>
+                                    <div class="stat-unit">barrels oil equivalent</div>
+                                </div>
+                            </div>
+
+                            <div class="current-technologies">
+                                <h4>Current Technologies</h4>
+                                <div class="tech-tags">
+                                    <span class="tech-tag">Basic CCUS pilot</span>
+                                    <span class="tech-tag">LED lighting</span>
+                                    <span class="tech-tag">VFD compressors</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="assessment-actions">
+                            <button class="btn btn--primary" onclick="runGapAnalysis()">Run AI Gap Analysis</button>
+                            <button class="btn btn--secondary" onclick="generateTechMatching()">Technology Matching</button>
+                        </div>
+                    </div>
+
+                    <div class="assessment-results">
+                        <div class="gap-analysis" id="gapAnalysis">
+                            <h3>Gap Analysis Results</h3>
+                            <div class="gap-category">
+                                <h4>Critical Gaps</h4>
+                                <div class="gap-list">
+                                    <div class="gap-item high">
+                                        <div class="gap-name">Methane monitoring</div>
+                                        <div class="gap-impact">High Impact</div>
+                                    </div>
+                                    <div class="gap-item high">
+                                        <div class="gap-name">Offshore hydrogen</div>
+                                        <div class="gap-impact">High Impact</div>
+                                    </div>
+                                    <div class="gap-item medium">
+                                        <div class="gap-name">Electrification</div>
+                                        <div class="gap-impact">Medium Impact</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="gap-category">
+                                <h4>Opportunities</h4>
+                                <div class="opportunity-list">
+                                    <div class="opportunity-item">
+                                        <div class="opportunity-name">Floating wind integration</div>
+                                        <div class="opportunity-score">87% feasibility</div>
+                                    </div>
+                                    <div class="opportunity-item">
+                                        <div class="opportunity-name">Advanced CCS</div>
+                                        <div class="opportunity-score">92% feasibility</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Roadmap Builder -->
+            <section id="roadmap" class="section">
+                <div class="section__header">
+                    <h1>Interactive Roadmap Builder</h1>
+                    <p>Advanced drag-and-drop roadmap creation with AI optimization</p>
+                </div>
+
+                <div class="roadmap-controls">
+                    <div class="control-group">
+                        <select class="form-control" id="roadmapView">
+                            <option value="timeline">Timeline View</option>
+                            <option value="gantt">Gantt Chart</option>
+                            <option value="kanban">Kanban Board</option>
+                        </select>
+                        <button class="btn btn--secondary" onclick="aiOptimizeRoadmap()">
+                            AI Optimize
+                        </button>
+                        <button class="btn btn--outline" onclick="validateRoadmap()">Validate Dependencies</button>
+                    </div>
+                    <div class="roadmap-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">£1.57B</span>
+                            <span class="stat-label">Total Investment</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">65%</span>
+                            <span class="stat-label">Target Reduction</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">2030</span>
+                            <span class="stat-label">Target Year</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="roadmap-workspace">
+                    <div class="technology-library">
+                        <h3>Technology Library</h3>
+                        <div class="library-search">
+                            <input type="text" class="form-control" placeholder="Search technologies..." id="techSearch">
+                            <select class="form-control" id="techFilter">
+                                <option value="">All Categories</option>
+                                <option value="CCUS">Carbon Capture</option>
+                                <option value="Renewable">Renewable Energy</option>
+                                <option value="Energy Efficiency">Energy Efficiency</option>
+                                <option value="Digital">Digital Solutions</option>
+                                <option value="Monitoring">Monitoring</option>
+                            </select>
+                        </div>
+                        <div class="tech-library-grid" id="techLibrary">
+                            <!-- Technology cards populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="roadmap-canvas">
+                        <div class="timeline-container">
+                            <div class="roadmap-instructions">
+                                <p><strong>📋 Instructions:</strong> Drag technologies from the library on the left into the timeline phases below to build your roadmap.</p>
+                            </div>
+                            <div class="timeline-phases">
+                                <div class="timeline-phase" data-phase="short-term">
+                                    <div class="phase-header">
+                                        <h4>Short-term (2025-2027)</h4>
+                                        <div class="phase-metrics">
+                                            <span class="phase-cost">£205M</span>
+                                            <span class="phase-impact">37% reduction</span>
+                                        </div>
+                                    </div>
+                                    <div class="phase-dropzone" id="shortTermZone">
+                                        <div class="dropzone-placeholder">
+                                            <div class="placeholder-icon">📦</div>
+                                            <p>Drop short-term technologies here</p>
+                                            <small>Quick wins and foundation technologies</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-phase" data-phase="medium-term">
+                                    <div class="phase-header">
+                                        <h4>Medium-term (2027-2030)</h4>
+                                        <div class="phase-metrics">
+                                            <span class="phase-cost">£770M</span>
+                                            <span class="phase-impact">63% reduction</span>
+                                        </div>
+                                    </div>
+                                    <div class="phase-dropzone" id="mediumTermZone">
+                                        <div class="dropzone-placeholder">
+                                            <div class="placeholder-icon">⚙️</div>
+                                            <p>Drop medium-term technologies here</p>
+                                            <small>Major implementations and scaling</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-phase" data-phase="long-term">
+                                    <div class="phase-header">
+                                        <h4>Long-term (2030+)</h4>
+                                        <div class="phase-metrics">
+                                            <span class="phase-cost">£600M</span>
+                                            <span class="phase-impact">40% reduction</span>
+                                        </div>
+                                    </div>
+                                    <div class="phase-dropzone" id="longTermZone">
+                                        <div class="dropzone-placeholder">
+                                            <div class="placeholder-icon">🚀</div>
+                                            <p>Drop long-term technologies here</p>
+                                            <small>Advanced and emerging technologies</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Collaboration Workspace -->
+            <section id="collaboration" class="section">
+                <div class="section__header">
+                    <h1>Collaboration Workspace</h1>
+                    <p>Team collaboration, comments, voting, and approval workflows</p>
+                </div>
+
+                <div class="collaboration-layout">
+                    <div class="workflow-panel">
+                        <h3>Active Workflows</h3>
+                        <div class="workflow-list" id="activeWorkflows">
+                            <!-- Workflows populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="collaboration-main">
+                        <div class="discussion-threads">
+                            <h3>Recent Discussions</h3>
+                            <div class="thread-list">
+                                <div class="thread-item">
+                                    <div class="thread-avatar">MC</div>
+                                    <div class="thread-content">
+                                        <div class="thread-header">
+                                            <strong>Mike Chen</strong> commented on CCS Technology Selection
+                                            <span class="thread-time">2 hours ago</span>
+                                        </div>
+                                        <p>The Aker Carbon Capture solution looks promising for our scale. Cost projections are within range.</p>
+                                        <div class="thread-actions">
+                                            <button class="btn-link">Reply</button>
+                                            <button class="btn-link">👍 5</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="thread-item">
+                                    <div class="thread-avatar">EW</div>
+                                    <div class="thread-content">
+                                        <div class="thread-header">
+                                            <strong>Emma Wilson</strong> voted on Hydrogen Strategy
+                                            <span class="thread-time">4 hours ago</span>
+                                        </div>
+                                        <p>Approved the phased approach. Recommend starting with blue hydrogen transition.</p>
+                                        <div class="thread-actions">
+                                            <button class="btn-link">Reply</button>
+                                            <button class="btn-link">👍 3</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="decision-center">
+                            <h3>Pending Decisions</h3>
+                            <div class="decision-item">
+                                <div class="decision-header">
+                                    <h4>CCS Technology Selection</h4>
+                                    <div class="decision-status pending">Stakeholder Review</div>
+                                </div>
+                                <div class="decision-votes">
+                                    <div class="vote-option">
+                                        <span class="vote-label">Aker Solution</span>
+                                        <div class="vote-bar">
+                                            <div class="vote-fill" style="width: 70%"></div>
+                                        </div>
+                                        <span class="vote-count">7 votes</span>
+                                    </div>
+                                    <div class="vote-option">
+                                        <span class="vote-label">Honeywell Option</span>
+                                        <div class="vote-bar">
+                                            <div class="vote-fill" style="width: 30%"></div>
+                                        </div>
+                                        <span class="vote-count">3 votes</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scenario Planning -->
+            <section id="scenarios" class="section">
+                <div class="section__header">
+                    <h1>Scenario Planning</h1>
+                    <p>Multiple scenario comparison and what-if analysis</p>
+                </div>
+
+                <div class="scenario-controls">
+                    <div class="scenario-selector">
+                        <button class="scenario-btn active" data-scenario="base">Base Case</button>
+                        <button class="scenario-btn" data-scenario="conservative">Conservative</button>
+                        <button class="scenario-btn" data-scenario="aggressive">Aggressive</button>
+                        <button class="scenario-btn" data-scenario="crisis">Crisis Response</button>
+                    </div>
+                    <div class="scenario-actions">
+                        <button class="btn btn--secondary" onclick="createNewScenario()">+ New Scenario</button>
+                        <button class="btn btn--outline" onclick="compareScenarios()">Compare All</button>
+                        <button class="btn btn--primary" onclick="runMonteCarloAnalysis()">Monte Carlo Analysis</button>
+                    </div>
+                </div>
+
+                <div class="scenario-workspace">
+                    <div class="scenario-parameters">
+                        <h3>Scenario Parameters</h3>
+                        <div class="parameter-grid">
+                            <div class="parameter-item">
+                                <label>Carbon Price (£/tonne)</label>
+                                <input type="range" min="50" max="200" value="85" class="slider" id="carbonPrice">
+                                <span class="slider-value">£85</span>
+                            </div>
+                            <div class="parameter-item">
+                                <label>Technology Cost Reduction (%/year)</label>
+                                <input type="range" min="0" max="20" value="12" class="slider" id="costReduction">
+                                <span class="slider-value">12%</span>
+                            </div>
+                            <div class="parameter-item">
+                                <label>Regulatory Stringency</label>
+                                <select class="form-control" id="regulatory">
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scenario-results">
+                        <div class="results-chart">
+                            <h3>Scenario Comparison</h3>
+                            <div style="position: relative; height: 400px;">
+                                <canvas id="scenarioChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="scenario-metrics">
+                            <h3>Key Metrics</h3>
+                            <div class="metrics-comparison">
+                                <div class="comparison-item">
+                                    <span class="metric-name">Total Investment</span>
+                                    <span class="metric-base">£1.57B</span>
+                                    <span class="metric-current">£1.42B</span>
+                                    <span class="metric-change positive">-9%</span>
+                                </div>
+                                <div class="comparison-item">
+                                    <span class="metric-name">Emissions Reduction</span>
+                                    <span class="metric-base">65%</span>
+                                    <span class="metric-current">58%</span>
+                                    <span class="metric-change negative">-7%</span>
+                                </div>
+                                <div class="comparison-item">
+                                    <span class="metric-name">Payback Period</span>
+                                    <span class="metric-base">4.2 years</span>
+                                    <span class="metric-current">3.8 years</span>
+                                    <span class="metric-change positive">-10%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Assistant -->
+            <section id="ai-assistant" class="section">
+                <div class="section__header">
+                    <h1>AI Technology Assistant</h1>
+                    <p>Conversational AI for strategic technology recommendations</p>
+                </div>
+
+                <div class="ai-layout">
+                    <div class="ai-chat-panel">
+                        <div class="ai-chat-header">
+                            <h3>NZTC AI Assistant</h3>
+                            <div class="ai-status">
+                                <div class="status-dot online"></div>
+                                <span>Enterprise AI Active</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-messages" id="aiMessages">
+                            <div class="ai-message assistant">
+                                <div class="message-avatar">AI</div>
+                                <div class="message-content">
+                                    <p>Hello Faizan! I'm your enterprise AI assistant. I have access to your complete operational profile and can provide strategic recommendations based on real-time market data.</p>
+                                    <div class="quick-actions">
+                                        <button class="action-btn" onclick="askAI('technology roadmap optimization')">Optimize Roadmap</button>
+                                        <button class="action-btn" onclick="askAI('competitive analysis CCS')">CCS Competitive Analysis</button>
+                                        <button class="action-btn" onclick="askAI('hydrogen market trends')">Hydrogen Market Trends</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ai-input-area">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Ask me anything about your net zero strategy..." id="aiInput">
+                                <button class="btn btn--primary" onclick="sendAIMessage()">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-insights-panel">
+                        <h3>Strategic Recommendations</h3>
+                        <div class="recommendation-cards" id="aiRecommendations">
+                            <!-- Recommendations populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Competitive Intelligence -->
+            <section id="intelligence" class="section">
+                <div class="section__header">
+                    <h1>Competitive Intelligence</h1>
+                    <p>Real-time competitor tracking and market analysis</p>
+                </div>
+
+                <div class="intelligence-dashboard">
+                    <div class="intel-summary">
+                        <div class="summary-cards">
+                            <div class="summary-card">
+                                <h3>Market Activity</h3>
+                                <div class="summary-value">15</div>
+                                <div class="summary-label">moves this month</div>
+                            </div>
+                            <div class="summary-card">
+                                <h3>Investment Volume</h3>
+                                <div class="summary-value">£8.2B</div>
+                                <div class="summary-label">announced Q4</div>
+                            </div>
+                            <div class="summary-card">
+                                <h3>New Partnerships</h3>
+                                <div class="summary-value">7</div>
+                                <div class="summary-label">strategic alliances</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="competitor-feed">
+                        <h3>Competitor Activity Feed</h3>
+                        <div class="feed-list" id="competitorFeed">
+                            <!-- Feed items populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="market-analysis">
+                        <h3>Market Intelligence</h3>
+                        <div class="market-segments">
+                            <div class="segment-card">
+                                <h4>CCUS Market</h4>
+                                <div class="segment-trend up">📈 Growing</div>
+                                <div class="segment-funding">£3.2B funding announced</div>
+                                <div class="segment-trl">Average TRL: 7→8</div>
+                                <div class="segment-outlook">15% cost reduction annually</div>
+                            </div>
+                            
+                            <div class="segment-card">
+                                <h4>Offshore Wind</h4>
+                                <div class="segment-trend up">📈 Expanding</div>
+                                <div class="segment-funding">£8.1B project pipeline</div>
+                                <div class="segment-trl">Floating: TRL 8</div>
+                                <div class="segment-outlook">LCOE target: £40/MWh</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics & Reporting -->
+            <section id="analytics" class="section">
+                <div class="section__header">
+                    <h1>Advanced Analytics & Reporting</h1>
+                    <p>Comprehensive insights and executive reporting</p>
+                </div>
+
+                <div class="analytics-tabs">
+                    <button class="tab-btn active" data-tab="overview">Overview</button>
+                    <button class="tab-btn" data-tab="performance">Performance</button>
+                    <button class="tab-btn" data-tab="predictive">Predictive</button>
+                    <button class="tab-btn" data-tab="reports">Reports</button>
+                </div>
+
+                <div class="analytics-content">
+                    <div class="tab-content active" id="overview">
+                        <div class="analytics-grid">
+                            <div class="chart-card">
+                                <h3>ROI Analysis</h3>
+                                <div style="position: relative; height: 300px;">
+                                    <canvas id="roiChart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-card">
+                                <h3>Technology Maturity</h3>
+                                <div style="position: relative; height: 300px;">
+                                    <canvas id="maturityChart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="kpi-card">
+                                <h3>Key Performance Indicators</h3>
+                                <div class="kpi-list">
+                                    <div class="kpi-item">
+                                        <span class="kpi-label">Implementation Progress</span>
+                                        <span class="kpi-value">28%</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 28%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="kpi-item">
+                                        <span class="kpi-label">Budget Utilization</span>
+                                        <span class="kpi-value">£4.485M</span>
+                                        <div class="kpi-trend positive">Within budget</div>
+                                    </div>
+                                    <div class="kpi-item">
+                                        <span class="kpi-label">Risk Score</span>
+                                        <span class="kpi-value">Medium</span>
+                                        <div class="risk-breakdown">
+                                            <span class="risk-item low">Tech: Low</span>
+                                            <span class="risk-item medium">Market: Med</span>
+                                            <span class="risk-item high">Reg: High</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Expert Consultation -->
+            <section id="expert" class="section">
+                <div class="section__header">
+                    <h1>Expert Consultation</h1>
+                    <p>Access to industry experts and consultation management</p>
+                </div>
+
+                <div class="expert-layout">
+                    <div class="consultation-status">
+                        <div class="status-card">
+                            <h3>Monthly Allocation</h3>
+                            <div class="hours-remaining">
+                                <div class="hours-value">5</div>
+                                <div class="hours-label">hours remaining</div>
+                            </div>
+                            <div class="usage-bar">
+                                <div class="usage-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-directory">
+                        <h3>Available Experts</h3>
+                        <div class="expert-grid">
+                            <div class="expert-card">
+                                <div class="expert-avatar">DR</div>
+                                <div class="expert-info">
+                                    <h4>Dr. Richard Thompson</h4>
+                                    <p>CCUS Technology Specialist</p>
+                                    <div class="expert-tags">
+                                        <span class="tag">Carbon Capture</span>
+                                        <span class="tag">Storage</span>
+                                        <span class="tag">Integration</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn--primary" onclick="bookConsultation('dr-thompson')">Book Session</button>
+                            </div>
+
+                            <div class="expert-card">
+                                <div class="expert-avatar">AM</div>
+                                <div class="expert-info">
+                                    <h4>Anna Martinez</h4>
+                                    <p>Offshore Wind Energy</p>
+                                    <div class="expert-tags">
+                                        <span class="tag">Floating Wind</span>
+                                        <span class="tag">Grid Integration</span>
+                                        <span class="tag">Economics</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn--primary" onclick="bookConsultation('anna-martinez')">Book Session</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API & Integrations -->
+            <section id="integrations" class="section">
+                <div class="section__header">
+                    <h1>API & Integrations</h1>
+                    <p>Connect with your existing systems and tools</p>
+                </div>
+
+                <div class="integrations-layout">
+                    <div class="api-status">
+                        <h3>API Usage</h3>
+                        <div class="api-metrics">
+                            <div class="api-metric">
+                                <label>Monthly Calls</label>
+                                <div class="metric-value">Unlimited</div>
+                            </div>
+                            <div class="api-metric">
+                                <label>Rate Limit</label>
+                                <div class="metric-value">1000/hr</div>
+                            </div>
+                            <div class="api-metric">
+                                <label>Uptime</label>
+                                <div class="metric-value">99.9%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="integrations-grid">
+                        <div class="integration-card">
+                            <div class="integration-icon">📊</div>
+                            <h4>Power BI</h4>
+                            <p>Real-time dashboard integration</p>
+                            <div class="integration-status connected">Connected</div>
+                        </div>
+
+                        <div class="integration-card">
+                            <div class="integration-icon">📈</div>
+                            <h4>Tableau</h4>
+                            <p>Advanced analytics visualization</p>
+                            <div class="integration-status available">Available</div>
+                        </div>
+
+                        <div class="integration-card">
+                            <div class="integration-icon">💼</div>
+                            <h4>Microsoft Teams</h4>
+                            <p>Collaboration notifications</p>
+                            <div class="integration-status connected">Connected</div>
+                        </div>
+
+                        <div class="integration-card">
+                            <div class="integration-icon">⚙️</div>
+                            <h4>SAP</h4>
+                            <p>ERP system integration</p>
+                            <div class="integration-status available">Available</div>
+                        </div>
+                    </div>
+
+                    <div class="api-documentation">
+                        <h3>API Documentation</h3>
+                        <div class="api-endpoints">
+                            <div class="endpoint-item">
+                                <span class="http-method get">GET</span>
+                                <span class="endpoint-path">/api/v1/technologies</span>
+                                <span class="endpoint-desc">Retrieve technology database</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="http-method post">POST</span>
+                                <span class="endpoint-path">/api/v1/roadmaps</span>
+                                <span class="endpoint-desc">Create new roadmap</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="http-method get">GET</span>
+                                <span class="endpoint-path">/api/v1/analytics</span>
+                                <span class="endpoint-desc">Get analytics data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
