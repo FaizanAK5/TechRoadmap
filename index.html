@@ -140,87 +140,306 @@
             </section>
 
             <!-- Technology Assessment Section -->
-            
 
             <section id="assessment" class="section">
                 <div class="section__header">
-                    <h1>Technology Assessment</h1>
-                    <p>AI-powered gap analysis and technology matching</p>
+                    <h1>Operational Assessment</h1>
+                    <p>Tell us about your operations to receive personalized technology recommendations</p>
                 </div>
 
-                
-
-                <div class="assessment-layout">
-                    <div class="assessment-form">
-                        <div class="form-section">
-                            <h3>Operational Profile</h3>
-                            <div class="profile-summary">
-                                <div class="profile-stat">
-                                    <label>Platform Count</label>
-                                    <div class="stat-value">4</div>
-                                </div>
-                                <div class="profile-stat">
-                                    <label>Processing Facilities</label>
-                                    <div class="stat-value">2</div>
-                                </div>
-                                <div class="profile-stat">
-                                    <label>Annual Production</label>
-                                    <div class="stat-value">150M</div>
-                                    <div class="stat-unit">barrels oil equivalent</div>
-                                </div>
-                            </div>
-
-                            <div class="current-technologies">
-                                <h4>Current Technologies</h4>
-                                <div class="tech-tags">
-                                    <span class="tech-tag">Basic CCUS pilot</span>
-                                    <span class="tech-tag">LED lighting</span>
-                                    <span class="tech-tag">VFD compressors</span>
-                                </div>
-                            </div>
+                <div class="assessment-wizard">
+                    <!-- Progress Indicator -->
+                    <div class="wizard-progress">
+                        <div class="progress-step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Company Info</div>
                         </div>
-
-                        <div class="assessment-actions">
-                            <button class="btn btn--primary" onclick="runGapAnalysis()">Run AI Gap Analysis</button>
-                            <button class="btn btn--secondary" onclick="generateTechMatching()">Technology Matching</button>
+                        <div class="progress-step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Operations</div>
+                        </div>
+                        <div class="progress-step" data-step="3">
+                            <div class="step-number">3</div>
+                            <div class="step-label">Emissions</div>
+                        </div>
+                        <div class="progress-step" data-step="4">
+                            <div class="step-number">4</div>
+                            <div class="step-label">Technologies</div>
+                        </div>
+                        <div class="progress-step" data-step="5">
+                            <div class="step-number">5</div>
+                            <div class="step-label">Goals</div>
                         </div>
                     </div>
 
-                    <div class="assessment-results">
-                        <div class="gap-analysis" id="gapAnalysis">
-                            <h3>Gap Analysis Results</h3>
-                            <div class="gap-category">
-                                <h4>Critical Gaps</h4>
-                                <div class="gap-list">
-                                    <div class="gap-item high">
-                                        <div class="gap-name">Methane monitoring</div>
-                                        <div class="gap-impact">High Impact</div>
-                                    </div>
-                                    <div class="gap-item high">
-                                        <div class="gap-name">Offshore hydrogen</div>
-                                        <div class="gap-impact">High Impact</div>
-                                    </div>
-                                    <div class="gap-item medium">
-                                        <div class="gap-name">Electrification</div>
-                                        <div class="gap-impact">Medium Impact</div>
-                                    </div>
+                    <!-- Assessment Form -->
+                    <div class="wizard-content">
+                        <!-- Step 1: Company Information -->
+                        <div class="wizard-step active" data-step="1">
+                            <h3>Company Information</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Company Name</label>
+                                    <input type="text" class="form-control" id="companyName" placeholder="Enter company name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Contact Person (optional)</label>
+                                    <input type="text" class="form-control" id="contactName" placeholder="e.g., John Smith">
+                                </div>
+                                <div class="form-group">
+                                    <label>Contact Email (optional)</label>
+                                    <input type="email" class="form-control" id="contactEmail" placeholder="e.g., john@company.com">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Industry Sector</label>
+                                    <select class="form-control" id="industrySector">
+                                        <option value="">Select sector</option>
+                                        <option value="oil-gas">Oil & Gas</option>
+                                        <option value="manufacturing">Manufacturing</option>
+                                        <option value="power-generation">Power Generation</option>
+                                        <option value="chemicals">Chemicals</option>
+                                        <option value="mining">Mining</option>
+                                        <option value="transportation">Transportation</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Primary Location</label>
+                                    <input type="text" class="form-control" id="primaryLocation" placeholder="Country/Region">
+                                </div>
+                                <div class="form-group">
+                                    <label>Number of Employees</label>
+                                    <select class="form-control" id="employeeCount">
+                                        <option value="">Select range</option>
+                                        <option value="1-50">1-50</option>
+                                        <option value="51-250">51-250</option>
+                                        <option value="251-1000">251-1,000</option>
+                                        <option value="1001-5000">1,001-5,000</option>
+                                        <option value="5000+">5,000+</option>
+                                    </select>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Annual Revenue (Optional)</label>
+                                    <input type="text" class="form-control" id="annualRevenue" placeholder="e.g., £500M">
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="gap-category">
-                                <h4>Opportunities</h4>
-                                <div class="opportunity-list">
-                                    <div class="opportunity-item">
-                                        <div class="opportunity-name">Floating wind integration</div>
-                                        <div class="opportunity-score">87% feasibility</div>
+                        <!-- Step 2: Operational Details -->
+                        <div class="wizard-step" data-step="2">
+                            <h3>Operational Details</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Number of Facilities/Sites</label>
+                                    <input type="number" class="form-control" id="facilityCount" placeholder="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>Facility Types</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="offshore-platform"> Offshore Platforms</label>
+                                        <label><input type="checkbox" value="processing-plant"> Processing Plants</label>
+                                        <label><input type="checkbox" value="refinery"> Refineries</label>
+                                        <label><input type="checkbox" value="manufacturing"> Manufacturing Facilities</label>
+                                        <label><input type="checkbox" value="warehouse"> Warehouses</label>
+                                        <label><input type="checkbox" value="office"> Office Buildings</label>
                                     </div>
-                                    <div class="opportunity-item">
-                                        <div class="opportunity-name">Advanced CCS</div>
-                                        <div class="opportunity-score">92% feasibility</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Annual Production Volume</label>
+                                    <input type="text" class="form-control" id="productionVolume" placeholder="e.g., 150M boe/year">
+                                </div>
+                                <div class="form-group">
+                                    <label>Energy Consumption (MWh/year)</label>
+                                    <input type="number" class="form-control" id="energyConsumption" placeholder="0">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Primary Energy Sources</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="natural-gas"> Natural Gas</label>
+                                        <label><input type="checkbox" value="diesel"> Diesel</label>
+                                        <label><input type="checkbox" value="grid-electricity"> Grid Electricity</label>
+                                        <label><input type="checkbox" value="coal"> Coal</label>
+                                        <label><input type="checkbox" value="renewable"> Renewable Energy</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Step 3: Emissions Profile -->
+                        <div class="wizard-step" data-step="3">
+                            <h3>Current Emissions Profile</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Total Annual CO₂ Emissions (tonnes)</label>
+                                    <input type="number" class="form-control" id="totalEmissions" placeholder="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>Scope 1 Emissions (%)</label>
+                                    <input type="number" class="form-control" id="scope1" placeholder="0-100" min="0" max="100">
+                                </div>
+                                <div class="form-group">
+                                    <label>Scope 2 Emissions (%)</label>
+                                    <input type="number" class="form-control" id="scope2" placeholder="0-100" min="0" max="100">
+                                </div>
+                                <div class="form-group">
+                                    <label>Scope 3 Emissions (%)</label>
+                                    <input type="number" class="form-control" id="scope3" placeholder="0-100" min="0" max="100">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Major Emission Sources</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="combustion"> Direct Combustion</label>
+                                        <label><input type="checkbox" value="flaring"> Flaring</label>
+                                        <label><input type="checkbox" value="venting"> Venting</label>
+                                        <label><input type="checkbox" value="fugitive"> Fugitive Emissions</label>
+                                        <label><input type="checkbox" value="process"> Process Emissions</label>
+                                        <label><input type="checkbox" value="purchased-power"> Purchased Electricity</label>
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Do you currently measure emissions?</label>
+                                    <select class="form-control" id="emissionsMeasurement">
+                                        <option value="">Select option</option>
+                                        <option value="continuous">Yes, continuous monitoring</option>
+                                        <option value="periodic">Yes, periodic assessments</option>
+                                        <option value="estimated">No, using estimates</option>
+                                        <option value="no">No measurement in place</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Current Technologies -->
+                        <div class="wizard-step" data-step="4">
+                            <h3>Current Technologies & Initiatives</h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label>Emission Reduction Technologies Currently Deployed</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="led-lighting"> LED Lighting</label>
+                                        <label><input type="checkbox" value="vfd"> Variable Frequency Drives</label>
+                                        <label><input type="checkbox" value="waste-heat"> Waste Heat Recovery</label>
+                                        <label><input type="checkbox" value="solar"> Solar Panels</label>
+                                        <label><input type="checkbox" value="wind"> Wind Turbines</label>
+                                        <label><input type="checkbox" value="ccs-pilot"> CCUS (Pilot)</label>
+                                        <label><input type="checkbox" value="leak-detection"> Leak Detection Systems</label>
+                                        <label><input type="checkbox" value="electrification"> Electrification Projects</label>
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Budget Allocated for Decarbonization</label>
+                                    <select class="form-control" id="decarbBudget">
+                                        <option value="">Select range</option>
+                                        <option value="under-1m">Under £1M</option>
+                                        <option value="1m-10m">£1M - £10M</option>
+                                        <option value="10m-50m">£10M - £50M</option>
+                                        <option value="50m-100m">£50M - £100M</option>
+                                        <option value="100m-500m">£100M - £500M</option>
+                                        <option value="over-500m">Over £500M</option>
+                                    </select>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Technologies of Interest (Select all that apply)</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="ccus"> Carbon Capture & Storage</label>
+                                        <label><input type="checkbox" value="hydrogen"> Green Hydrogen</label>
+                                        <label><input type="checkbox" value="electrification"> Electrification</label>
+                                        <label><input type="checkbox" value="floating-wind"> Floating Wind</label>
+                                        <label><input type="checkbox" value="energy-efficiency"> Energy Efficiency</label>
+                                        <label><input type="checkbox" value="digital-twin"> Digital Twin</label>
+                                        <label><input type="checkbox" value="methane-monitoring"> Methane Monitoring</label>
+                                        <label><input type="checkbox" value="subsea"> Subsea Processing</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Goals & Constraints -->
+                        <div class="wizard-step" data-step="5">
+                            <h3>Decarbonization Goals & Constraints</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Target Net Zero Year</label>
+                                    <select class="form-control" id="targetYear">
+                                        <option value="">Select year</option>
+                                        <option value="2030">2030</option>
+                                        <option value="2035">2035</option>
+                                        <option value="2040">2040</option>
+                                        <option value="2045">2045</option>
+                                        <option value="2050">2050</option>
+                                        <option value="after-2050">After 2050</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Interim Reduction Target (%)</label>
+                                    <input type="number" class="form-control" id="interimTarget" placeholder="e.g., 50% by 2030" min="0" max="100">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Key Constraints (Select all that apply)</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="budget"> Budget Limitations</label>
+                                        <label><input type="checkbox" value="technology-maturity"> Technology Maturity</label>
+                                        <label><input type="checkbox" value="regulatory"> Regulatory Uncertainty</label>
+                                        <label><input type="checkbox" value="infrastructure"> Infrastructure Limitations</label>
+                                        <label><input type="checkbox" value="supply-chain"> Supply Chain Constraints</label>
+                                        <label><input type="checkbox" value="operational"> Operational Disruption</label>
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Primary Objectives (Rank top 3)</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="cost-reduction"> Cost Reduction</label>
+                                        <label><input type="checkbox" value="regulatory-compliance"> Regulatory Compliance</label>
+                                        <label><input type="checkbox" value="reputation"> Brand/Reputation</label>
+                                        <label><input type="checkbox" value="operational-efficiency"> Operational Efficiency</label>
+                                        <label><input type="checkbox" value="innovation"> Innovation Leadership</label>
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Additional Comments or Specific Requirements</label>
+                                    <textarea class="form-control" id="additionalComments" rows="4" placeholder="Tell us anything else relevant to your decarbonization journey..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results View -->
+                        <div class="wizard-step" data-step="results" style="display: none;">
+                            <div class="results-header">
+                                <h3>Assessment Complete!</h3>
+                                <p>Based on your inputs, here's your personalized analysis</p>
+                            </div>
+                            
+                            <div class="results-summary">
+                                <div class="summary-card">
+                                    <h4>Your Profile</h4>
+                                    <div id="profileSummary"></div>
+                                </div>
+                                
+                                <div class="summary-card">
+                                    <h4>Recommended Technologies</h4>
+                                    <div id="recommendedTechs"></div>
+                                </div>
+                                
+                                <div class="summary-card">
+                                    <h4>Priority Actions</h4>
+                                    <div id="priorityActions"></div>
+                                </div>
+                            </div>
+
+                            <div class="results-actions">
+                                <button class="btn btn--primary" onclick="goToRoadmap()">Build Your Roadmap</button>
+                                <button class="btn btn--secondary" onclick="downloadAssessment()">Download Report</button>
+                                <button class="btn btn--outline" onclick="restartAssessment()">Start New Assessment</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="wizard-navigation">
+                        <button class="btn btn--outline" id="prevBtn" onclick="previousStep()" style="display: none;">Previous</button>
+                        <button class="btn btn--primary" id="nextBtn" onclick="nextStep()">Next</button>
+                        <button class="btn btn--primary" id="submitBtn" onclick="submitAssessment()" style="display: none;">Submit Assessment</button>
                     </div>
                 </div>
             </section>

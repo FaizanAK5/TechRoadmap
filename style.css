@@ -1087,6 +1087,244 @@ select.form-control {
 /* Technology Assessment */
 /* //// */
 
+/* Assessment Section - Wizard Style */
+.assessment-wizard {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+  margin-top: 24px;
+}
+
+.wizard-progress {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.wizard-progress::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 60px;
+  right: 60px;
+  height: 2px;
+  background: #e5e5e5;
+  z-index: 0;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.progress-step.active .step-number {
+  background: #1FB8CD;
+  color: white;
+}
+
+.progress-step.completed .step-number {
+  background: #1F9E89;
+  color: white;
+}
+
+.step-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.progress-step.active .step-label {
+  color: #1FB8CD;
+  font-weight: 600;
+}
+
+.wizard-content {
+  min-height: 450px;
+  margin-bottom: 32px;
+}
+
+.wizard-step {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.wizard-step.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wizard-step h3 {
+  font-size: 22px;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-control {
+  padding: 12px 16px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #1FB8CD;
+  box-shadow: 0 0 0 3px rgba(31, 184, 205, 0.1);
+}
+
+.form-control::placeholder {
+  color: #999;
+}
+
+textarea.form-control {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #1FB8CD;
+}
+
+.wizard-navigation {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid #e5e5e5;
+}
+
+/* Results View */
+.results-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.results-header h3 {
+  font-size: 28px;
+  color: #1FB8CD;
+  margin-bottom: 8px;
+}
+
+.results-header p {
+  font-size: 16px;
+  color: #666;
+}
+
+.results-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.summary-card {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid #e5e5e5;
+}
+
+.summary-card h4 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.results-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+#profileSummary,
+#recommendedTechs,
+#priorityActions {
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+#recommendedTechs .tech-item,
+#priorityActions .action-item {
+  padding: 10px 12px;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border-left: 3px solid #1FB8CD;
+}
  
 /* small responsive tweak */
 @media (max-width: 980px) {
@@ -3001,6 +3239,8 @@ select.form-control {
 .phase-dropzone .tech-card {
   transition: transform 320ms cubic-bezier(.2,.9,.2,1), opacity 320ms;
 }
+
+
 
 /* Dependency modal */
 .dep-modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity .18s ease; }

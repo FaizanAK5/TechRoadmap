@@ -1831,6 +1831,9 @@ function bookConsultation(expertId) {
   alert(`📅 Booking consultation with ${expertNames[expertId]}\n\nAvailable slots this week:\n• Tomorrow 2:00 PM (1 hour)\n• Friday 10:00 AM (2 hours)\n• Friday 3:00 PM (1 hour)\n\nPreferred session length and topics?\nRemaining allocation: 5 hours this month`);
 }
 
+
+
+
 // Search and filter functionality
 document.addEventListener('DOMContentLoaded', function() {
   const techSearch = document.getElementById('techSearch');
@@ -2403,7 +2406,473 @@ function showDependencyReport(text, issues, recommendedOrder) {
   console.log('Dependency validation result (modal):', { text, issues, recommendedOrder });
 }
 
+// Assessment Wizard State
+let currentWizardStep = 1;
+let assessmentData = {};
 
+// Initialize assessment wizard
+function initializeAssessmentWizard() {
+  updateWizardButtons();
+}
+
+// Navigate to next step
+function nextStep() {
+  const currentStep = document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`);
+  
+  // Validate current step
+  if (!validateStep(currentWizardStep)) {
+    alert('Please fill in all required fields before proceeding.');
+    return;
+  }
+  
+  // Save current step data
+  saveStepData(currentWizardStep);
+  
+  // Move to next step
+  if (currentWizardStep < 5) {
+    currentStep.classList.remove('active');
+    
+    // Update progress
+    const progressStep = document.querySelector(`.progress-step[data-step="${currentWizardStep}"]`);
+    progressStep.classList.add('completed');
+    progressStep.classList.remove('active');
+    
+    currentWizardStep++;
+    
+    const nextStep = document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`);
+    nextStep.classList.add('active');
+    
+    const nextProgressStep = document.querySelector(`.progress-step[data-step="${currentWizardStep}"]`);
+    nextProgressStep.classList.add('active');
+    
+    updateWizardButtons();
+    
+    // Scroll to top of wizard
+    document.querySelector('.assessment-wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// Navigate to previous step
+function previousStep() {
+  if (currentWizardStep > 1) {
+    const currentStep = document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`);
+    currentStep.classList.remove('active');
+    
+    const progressStep = document.querySelector(`.progress-step[data-step="${currentWizardStep}"]`);
+    progressStep.classList.remove('active');
+    
+    currentWizardStep--;
+    
+    const prevStep = document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`);
+    prevStep.classList.add('active');
+    
+    const prevProgressStep = document.querySelector(`.progress-step[data-step="${currentWizardStep}"]`);
+    prevProgressStep.classList.add('active');
+    prevProgressStep.classList.remove('completed');
+    
+    updateWizardButtons();
+    
+    // Scroll to top of wizard
+    document.querySelector('.assessment-wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// Update wizard navigation buttons
+function updateWizardButtons() {
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if (currentWizardStep === 1) {
+    prevBtn.style.display = 'none';
+  } else {
+    prevBtn.style.display = 'inline-block';
+  }
+  
+  if (currentWizardStep === 5) {
+    nextBtn.style.display = 'none';
+    submitBtn.style.display = 'inline-block';
+  } else {
+    nextBtn.style.display = 'inline-block';
+    submitBtn.style.display = 'none';
+  }
+}
+
+// Validate current step
+function validateStep(step) {
+  let isValid = true;
+  
+  switch(step) {
+    case 1:
+      // Company info - require company name and sector
+      const companyName = document.getElementById('companyName').value.trim();
+      const sector = document.getElementById('industrySector').value;
+      isValid = companyName !== '' && sector !== '';
+      break;
+    case 2:
+      // Operations - require facility count
+      const facilityCount = document.getElementById('facilityCount').value;
+      isValid = facilityCount !== '' && facilityCount > 0;
+      break;
+    case 3:
+      // Emissions - require total emissions
+      const totalEmissions = document.getElementById('totalEmissions').value;
+      isValid = totalEmissions !== '' && totalEmissions > 0;
+      break;
+    case 4:
+      // Technologies - require budget selection
+      const budget = document.getElementById('decarbBudget').value;
+      isValid = budget !== '';
+      break;
+    case 5:
+      // Goals - require target year
+      const targetYear = document.getElementById('targetYear').value;
+      isValid = targetYear !== '';
+      break;
+  }
+  
+  return isValid;
+}
+
+// Save step data
+function saveStepData(step) {
+  switch(step) {
+    case 1:
+      assessmentData.companyName = document.getElementById('companyName').value;
+      assessmentData.industrySector = document.getElementById('industrySector').value;
+      assessmentData.primaryLocation = document.getElementById('primaryLocation').value;
+      assessmentData.employeeCount = document.getElementById('employeeCount').value;
+      assessmentData.annualRevenue = document.getElementById('annualRevenue').value;
+      break;
+    case 2:
+      assessmentData.facilityCount = document.getElementById('facilityCount').value;
+      assessmentData.facilityTypes = getCheckedValues('input[type="checkbox"][value^="offshore-"], input[type="checkbox"][value^="processing-"], input[type="checkbox"][value^="refinery"], input[type="checkbox"][value^="manufacturing"], input[type="checkbox"][value^="warehouse"], input[type="checkbox"][value^="office"]');
+      assessmentData.productionVolume = document.getElementById('productionVolume').value;
+      assessmentData.energyConsumption = document.getElementById('energyConsumption').value;
+      assessmentData.energySources = getCheckedValues('input[type="checkbox"][value^="natural-"], input[type="checkbox"][value^="diesel"], input[type="checkbox"][value^="grid-"], input[type="checkbox"][value^="coal"], input[type="checkbox"][value^="renewable"]');
+      break;
+    case 3:
+      assessmentData.totalEmissions = document.getElementById('totalEmissions').value;
+      assessmentData.scope1 = document.getElementById('scope1').value;
+      assessmentData.scope2 = document.getElementById('scope2').value;
+      assessmentData.scope3 = document.getElementById('scope3').value;
+      assessmentData.emissionSources = getCheckedValues('input[type="checkbox"][value="combustion"], input[type="checkbox"][value="flaring"], input[type="checkbox"][value="venting"], input[type="checkbox"][value="fugitive"], input[type="checkbox"][value="process"], input[type="checkbox"][value="purchased-power"]');
+      assessmentData.emissionsMeasurement = document.getElementById('emissionsMeasurement').value;
+      break;
+    case 4:
+      assessmentData.currentTechnologies = getCheckedValues('input[type="checkbox"][value="led-lighting"], input[type="checkbox"][value="vfd"], input[type="checkbox"][value="waste-heat"], input[type="checkbox"][value="solar"], input[type="checkbox"][value="wind"], input[type="checkbox"][value="ccs-pilot"], input[type="checkbox"][value="leak-detection"], input[type="checkbox"][value="electrification"]');
+      assessmentData.decarbBudget = document.getElementById('decarbBudget').value;
+      assessmentData.technologiesOfInterest = getCheckedValues('input[type="checkbox"][value="ccus"], input[type="checkbox"][value="hydrogen"], input[type="checkbox"][value="electrification"], input[type="checkbox"][value="floating-wind"], input[type="checkbox"][value="energy-efficiency"], input[type="checkbox"][value="digital-twin"], input[type="checkbox"][value="methane-monitoring"], input[type="checkbox"][value="subsea"]');
+      break;
+    case 5:
+      assessmentData.targetYear = document.getElementById('targetYear').value;
+      assessmentData.interimTarget = document.getElementById('interimTarget').value;
+      assessmentData.constraints = getCheckedValues('input[type="checkbox"][value="budget"], input[type="checkbox"][value="technology-maturity"], input[type="checkbox"][value="regulatory"], input[type="checkbox"][value="infrastructure"], input[type="checkbox"][value="supply-chain"], input[type="checkbox"][value="operational"]');
+      assessmentData.objectives = getCheckedValues('input[type="checkbox"][value="cost-reduction"], input[type="checkbox"][value="regulatory-compliance"], input[type="checkbox"][value="reputation"], input[type="checkbox"][value="operational-efficiency"], input[type="checkbox"][value="innovation"]');
+      assessmentData.additionalComments = document.getElementById('additionalComments').value;
+      break;
+  }
+  
+  console.log('Assessment data saved:', assessmentData);
+}
+
+// Helper to get checked checkbox values
+function getCheckedValues(selector) {
+  const checkboxes = document.querySelectorAll(selector);
+  const values = [];
+  checkboxes.forEach(cb => {
+    if (cb.checked) values.push(cb.value);
+  });
+  return values;
+}
+
+// Submit assessment
+function submitAssessment() {
+  // Save final step
+  saveStepData(5);
+  
+  // Mark last step as completed
+  const lastProgressStep = document.querySelector(`.progress-step[data-step="5"]`);
+  lastProgressStep.classList.add('completed');
+  
+  // Hide current step
+  const currentStep = document.querySelector(`.wizard-step[data-step="5"]`);
+  currentStep.classList.remove('active');
+  
+  // Process and show results
+  processAssessmentResults();
+  
+  // Show results view
+  const resultsView = document.querySelector(`.wizard-step[data-step="results"]`);
+  resultsView.style.display = 'block';
+  
+  // Hide navigation buttons
+  document.querySelector('.wizard-navigation').style.display = 'none';
+  
+  // Scroll to top
+  document.querySelector('.assessment-wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  
+  // Send data to backend (placeholder)
+  console.log('Submitting assessment data:', assessmentData);
+  // In production: fetch('/api/assessment', { method: 'POST', body: JSON.stringify(assessmentData) })
+}
+
+// Process assessment and generate recommendations
+function processAssessmentResults() {
+  // Generate profile summary
+  const profileSummary = document.getElementById('profileSummary');
+  profileSummary.innerHTML = `
+    <p><strong>Company:</strong> ${assessmentData.companyName}</p>
+    <p><strong>Sector:</strong> ${formatValue(assessmentData.industrySector)}</p>
+    <p><strong>Facilities:</strong> ${assessmentData.facilityCount}</p>
+    <p><strong>Annual Emissions:</strong> ${Number(assessmentData.totalEmissions).toLocaleString()} tonnes CO₂</p>
+    <p><strong>Target Year:</strong> ${assessmentData.targetYear}</p>
+    <p><strong>Budget Range:</strong> ${formatValue(assessmentData.decarbBudget)}</p>
+  `;
+  
+  // Generate recommended technologies based on inputs
+  const recommendedTechs = document.getElementById('recommendedTechs');
+  const recommendations = generateTechnologyRecommendations(assessmentData);
+  recommendedTechs.innerHTML = recommendations.map(tech => `
+    <div class="tech-item">
+      <strong>${tech.name}</strong><br>
+      <small>Match: ${tech.matchScore}% | Impact: ${tech.impact}</small>
+    </div>
+  `).join('');
+  
+  // Generate priority actions
+  const priorityActions = document.getElementById('priorityActions');
+  const actions = generatePriorityActions(assessmentData);
+  priorityActions.innerHTML = actions.map(action => `
+    <div class="action-item">
+      <strong>${action.title}</strong><br>
+      <small>${action.description}</small>
+    </div>
+  `).join('');
+}
+
+// Generate technology recommendations based on assessment
+function generateTechnologyRecommendations(data) {
+  const recommendations = [];
+  
+  // Logic to match technologies based on user inputs
+  if (data.technologiesOfInterest.includes('ccus')) {
+    recommendations.push({
+      name: 'Carbon Capture & Storage',
+      matchScore: 92,
+      impact: 'High'
+    });
+  }
+  
+  if (data.technologiesOfInterest.includes('electrification')) {
+    recommendations.push({
+      name: 'Platform Electrification',
+      matchScore: 88,
+      impact: 'High'
+    });
+  }
+  
+  if (data.technologiesOfInterest.includes('digital-twin')) {
+    recommendations.push({
+      name: 'Digital Twin Optimization',
+      matchScore: 85,
+      impact: 'Medium'
+    });
+  }
+  
+  if (data.emissionSources.includes('fugitive') || data.technologiesOfInterest.includes('methane-monitoring')) {
+    recommendations.push({
+      name: 'Advanced Leak Detection',
+      matchScore: 90,
+      impact: 'High'
+    });
+  }
+  
+  if (data.technologiesOfInterest.includes('energy-efficiency')) {
+    recommendations.push({
+      name: 'Waste Heat Recovery',
+      matchScore: 82,
+      impact: 'Medium'
+    });
+  }
+  
+  if (data.technologiesOfInterest.includes('floating-wind')) {
+    recommendations.push({
+      name: 'Floating Wind Integration',
+      matchScore: 78,
+      impact: 'High'
+    });
+  }
+  
+  // Sort by match score
+  recommendations.sort((a, b) => b.matchScore - a.matchScore);
+  
+  // Return top 5
+  return recommendations.slice(0, 5);
+}
+
+// Generate priority actions
+function generatePriorityActions(data) {
+  const actions = [];
+  
+  // Analyze emissions measurement
+  if (data.emissionsMeasurement === 'no' || data.emissionsMeasurement === 'estimated') {
+    actions.push({
+      title: 'Establish Emissions Monitoring',
+      description: 'Set up continuous monitoring systems for accurate baseline measurement'
+    });
+  }
+  
+  // Check for quick wins
+  if (!data.currentTechnologies.includes('led-lighting')) {
+    actions.push({
+      title: 'LED Lighting Upgrade',
+      description: 'Low-cost, immediate impact retrofit opportunity'
+    });
+  }
+  
+  // Budget-appropriate actions
+  if (data.decarbBudget === '10m-50m' || data.decarbBudget === '50m-100m') {
+    actions.push({
+      title: 'Electrification Pilot Project',
+      description: 'Start with one platform to demonstrate ROI and build capabilities'
+    });
+  }
+  
+  // Target year urgency
+  if (data.targetYear === '2030' || data.targetYear === '2035') {
+    actions.push({
+      title: 'Accelerate Technology Deployment',
+      description: 'Your target requires immediate action on high-impact technologies'
+    });
+  }
+  
+  // Constraint-based recommendations
+  if (data.constraints.includes('budget')) {
+    actions.push({
+      title: 'Explore Financing Options',
+      description: 'Investigate green bonds, tax incentives, and partnership opportunities'
+    });
+  }
+  
+  return actions.slice(0, 5);
+}
+
+// Format values for display
+function formatValue(value) {
+  if (!value) return 'Not specified';
+  return value.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+// Restart assessment
+function restartAssessment() {
+  // Reset state
+  currentWizardStep = 1;
+  assessmentData = {};
+  
+  // Hide results
+  const resultsView = document.querySelector(`.wizard-step[data-step="results"]`);
+  resultsView.style.display = 'none';
+  
+  // Show first step
+  const firstStep = document.querySelector(`.wizard-step[data-step="1"]`);
+  firstStep.classList.add('active');
+  
+  // Reset progress indicators
+  document.querySelectorAll('.progress-step').forEach((step, index) => {
+    step.classList.remove('active', 'completed');
+    if (index === 0) step.classList.add('active');
+  });
+  
+  // Clear form inputs
+  document.querySelectorAll('.wizard-step input, .wizard-step select, .wizard-step textarea').forEach(input => {
+    if (input.type === 'checkbox') {
+      input.checked = false;
+    } else {
+      input.value = '';
+    }
+  });
+  
+  // Show navigation
+  document.querySelector('.wizard-navigation').style.display = 'flex';
+  updateWizardButtons();
+  
+  // Scroll to top
+  document.querySelector('.assessment-wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Go to roadmap section with assessment data
+function goToRoadmap() {
+  // Store assessment data for use in roadmap
+  localStorage.setItem('assessmentData', JSON.stringify(assessmentData));
+  
+  // Navigate to roadmap section
+  showSection('roadmap');
+  
+  // Update active nav
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelector('.nav-link[data-section="roadmap"]').classList.add('active');
+  
+  // Pre-populate roadmap with recommended technologies
+  setTimeout(() => {
+    populateRoadmapFromAssessment();
+  }, 500);
+}
+
+// Download assessment report
+function downloadAssessment() {
+  // Generate PDF or export data (placeholder)
+  const reportData = JSON.stringify(assessmentData, null, 2);
+  const blob = new Blob([reportData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `assessment-${assessmentData.companyName}-${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  alert('Assessment report downloaded! In production, this would generate a comprehensive PDF report.');
+}
+
+// Populate roadmap based on assessment recommendations
+function populateRoadmapFromAssessment() {
+  const storedData = localStorage.getItem('assessmentData');
+  if (!storedData) return;
+  
+  const data = JSON.parse(storedData);
+  const recommendations = generateTechnologyRecommendations(data);
+  
+  // Clear existing roadmap
+  placedTechnologies = {
+    'short-term': [],
+    'medium-term': [],
+    'long-term': []
+  };
+  
+  // Map recommendations to technologies and place them
+  recommendations.forEach(rec => {
+    const tech = enterpriseData.technologyLibrary.find(t => 
+      t.name.toLowerCase().includes(rec.name.toLowerCase()) ||
+      rec.name.toLowerCase().includes(t.name.toLowerCase())
+    );
+    
+    if (tech) {
+      // Place based on timeline and TRL
+      let phase = 'medium-term';
+      if (tech.trl >= 8) phase = 'short-term';
+      if (tech.trl <= 6) phase = 'long-term';
+      
+      placedTechnologies[phase].push(tech);
+    }
+  });
+  
+  renderPlacedTechnologies();
+  updatePhaseMetrics();
+  
+  alert('Roadmap pre-populated with recommended technologies based on your assessment!');
+}
 
 // Make functions available globally
 window.showSection = showSection;
