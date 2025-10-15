@@ -289,12 +289,18 @@ function initialiseNavigation() {
   
   navLinks.forEach(link => {
     link.addEventListener('click', function(e) {
-      e.preventDefault();
       const sectionId = this.getAttribute('data-section');
-      showSection(sectionId);
       
-      navLinks.forEach(l => l.classList.remove('active'));
-      this.classList.add('active');
+      // Only prevent default if the link has a data-section attribute
+      if (sectionId) {
+        e.preventDefault();
+        showSection(sectionId);
+        
+        // Update active nav link
+        navLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      }
+      // If no data-section, let the link work normally (like the Admin link)
     });
   });
 }
