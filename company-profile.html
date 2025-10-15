@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile | NZTC Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <h2>NZTC Enterprise</h2>
+                    <div class="enterprise-badge">Admin</div>
+                </div>
+                <nav class="header__nav">
+                    <a href="index.html" class="nav-link active">Go Back to Platform</a>
+                    <a href="admin-submissions.html" class="nav-link">Submissions</a>
+                </nav>
+                <div class="header__profile">
+                    <div class="profile-info">
+                        <div class="profile-name">Faizan Abbas</div>
+                        <div class="profile-role">Agentic AI Guy</div>
+                        <div class="profile-company">Net Zero TC</div>
+                    </div>
+                    <div class="profile-avatar">FA</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+        <!-- Back Button -->
+        <div class="breadcrumb">
+            <a href="admin-submissions.html" class="breadcrumb-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Back to Submissions
+            </a>
+        </div>
+
+        <!-- Company Header -->
+        <div class="company-profile-header">
+            <div class="company-header-left">
+                <div class="company-logo-large" id="companyLogo">BP</div>
+                <div class="company-header-info">
+                    <h1 id="companyName">BP Energy</h1>
+                    <div class="company-header-meta">
+                        <span class="sector-badge" id="companySector">Oil & Gas</span>
+                        <span class="profile-meta-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span id="contactName">John Mitchell</span>
+                        </span>
+                        <span class="profile-meta-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <span id="facilityCount">8</span> facilities
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="company-header-actions">
+                <button class="btn btn--secondary" onclick="contactCompanyProfile()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    Contact
+                </button>
+                <button class="btn btn--primary" onclick="scheduleConsultation()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Schedule Meeting
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Metrics Row -->
+        <div class="profile-metrics-grid">
+            <div class="profile-metric-card">
+                <div class="metric-icon" style="background-color: var(--color-bg-4);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-error)" stroke-width="2">
+                        <path d="M18 20V10"></path>
+                        <path d="M12 20V4"></path>
+                        <path d="M6 20v-6"></path>
+                    </svg>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">Annual Emissions</div>
+                    <div class="metric-value" id="profileEmissions">3.2M tonnes CO₂</div>
+                </div>
+            </div>
+
+            <div class="profile-metric-card">
+                <div class="metric-icon" style="background-color: var(--color-bg-3);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">Target Year</div>
+                    <div class="metric-value" id="profileTarget">2030</div>
+                </div>
+            </div>
+
+            <div class="profile-metric-card">
+                <div class="metric-icon" style="background-color: var(--color-bg-6);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning)" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">Budget Range</div>
+                    <div class="metric-value" id="profileBudget">£500M-£1B</div>
+                </div>
+            </div>
+
+            <div class="profile-metric-card">
+                <div class="metric-icon" style="background-color: var(--color-bg-1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">Total Submissions</div>
+                    <div class="metric-value" id="profileSubmissionCount">2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="profile-content-grid">
+            <!-- Left Column -->
+            <div class="profile-left-column">
+                <!-- Contact Information -->
+                <div class="profile-card">
+                    <h3 class="profile-card-title">Contact Information</h3>
+                    <div class="contact-profile-card">
+                        <div class="contact-avatar-large" id="contactAvatar">JM</div>
+                        <div class="contact-details-full">
+                            <div class="contact-name-large" id="contactNameFull">John Mitchell</div>
+                            <div class="contact-title" id="contactTitle">Head of Sustainability</div>
+                            
+                            <div class="contact-info-list">
+                                <div class="contact-info-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                    <a href="mailto:j.mitchell@bp.com" id="contactEmail">j.mitchell@bp.com</a>
+                                </div>
+                                <div class="contact-info-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                    </svg>
+                                    <a href="tel:+442074964000" id="contactPhone">+44 20 7496 4000</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Challenges Overview -->
+                <div class="profile-card">
+                    <h3 class="profile-card-title">Key Challenges</h3>
+                    <div class="challenges-profile-list" id="challengesList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Current Technologies -->
+                <div class="profile-card">
+                    <h3 class="profile-card-title">Current Technologies</h3>
+                    <div class="tech-tags" id="currentTechList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="profile-right-column">
+                <!-- AI Recommendations -->
+                <div class="profile-card">
+                    <h3 class="profile-card-title">AI Recommendations</h3>
+                    <div class="recommendations-profile-list" id="recommendationsList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Submission History Timeline -->
+                <div class="profile-card">
+                    <h3 class="profile-card-title">Submission History</h3>
+                    <div class="timeline" id="submissionTimeline">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Internal Notes -->
+                <div class="profile-card">
+                    <h3 class="profile-card-title">Internal Notes</h3>
+                    <div class="notes-section">
+                        <div class="note-item" id="internalNotes">
+                            <div class="note-content">
+                                <p>High-priority client, interested in CCS partnership</p>
+                            </div>
+                            <div class="note-meta">Added on 12 Oct 2025</div>
+                        </div>
+                        <button class="btn btn--secondary btn-small" onclick="addNote()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add Note
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Submissions from this Company -->
+        <div class="profile-card">
+            <h3 class="profile-card-title">All Submissions from this Company</h3>
+            <div class="submissions-history-list" id="allSubmissionsList">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get company ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const companyId = parseInt(urlParams.get('id')) || 1;
+
+        // Use the same data structure from admin-submissions.js
+        const submissionsData = [
+            {
+                id: 1,
+                company: "BP Energy",
+                contact: { name: "John Mitchell", email: "j.mitchell@bp.com", phone: "+44 20 7496 4000" },
+                sector: "Oil & Gas",
+                submittedDate: "2025-10-12",
+                facilityCount: 8,
+                emissions: 3200000,
+                targetYear: 2030,
+                budget: "£500M-£1B",
+                keyChallenge: "High emissions from offshore platforms",
+                challenges: ["Offshore platform emissions", "Aging infrastructure", "Regulatory compliance"],
+                currentTech: ["Basic monitoring", "Manual reporting"],
+                aiRecommendations: [
+                    { tech: "Carbon Capture & Storage", confidence: 92, impact: "35% reduction" },
+                    { tech: "Platform Electrification", confidence: 88, impact: "22% reduction" },
+                    { tech: "Advanced Leak Detection", confidence: 95, impact: "15% reduction" }
+                ],
+                status: "new",
+                notes: "High-priority client, interested in CCS partnership",
+                submissionCount: 2,
+                allSubmissions: [
+                    { date: "2025-10-12", focus: "Offshore Platform Decarbonization", status: "new" },
+                    { date: "2025-08-15", focus: "Renewable Energy Integration", status: "followed-up" }
+                ]
+            }
+        ];
+
+        // Find the company data
+        const companyData = submissionsData.find(s => s.id === companyId) || submissionsData[0];
+
+        // Populate page with company data
+        document.addEventListener('DOMContentLoaded', function() {
+            populateCompanyProfile(companyData);
+        });
+
+        function populateCompanyProfile(data) {
+            // Header
+            document.getElementById('companyName').textContent = data.company;
+            document.getElementById('companyLogo').textContent = data.company.charAt(0);
+            document.getElementById('companySector').textContent = data.sector;
+            document.getElementById('contactName').textContent = data.contact.name;
+            document.getElementById('facilityCount').textContent = data.facilityCount;
+
+            // Metrics
+            document.getElementById('profileEmissions').textContent = formatNumber(data.emissions) + ' tonnes CO₂';
+            document.getElementById('profileTarget').textContent = data.targetYear;
+            document.getElementById('profileBudget').textContent = data.budget;
+            document.getElementById('profileSubmissionCount').textContent = data.submissionCount;
+
+            // Contact
+            const initials = data.contact.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('contactAvatar').textContent = initials;
+            document.getElementById('contactNameFull').textContent = data.contact.name;
+            document.getElementById('contactEmail').textContent = data.contact.email;
+            document.getElementById('contactEmail').href = 'mailto:' + data.contact.email;
+            document.getElementById('contactPhone').textContent = data.contact.phone;
+            document.getElementById('contactPhone').href = 'tel:' + data.contact.phone.replace(/\s/g, '');
+
+            // Challenges
+            const challengesList = document.getElementById('challengesList');
+            challengesList.innerHTML = data.challenges.map(c => `
+                <div class="challenge-profile-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span>${c}</span>
+                </div>
+            `).join('');
+
+            // Current Tech
+            const currentTechList = document.getElementById('currentTechList');
+            currentTechList.innerHTML = data.currentTech.map(t => `<span class="tech-tag">${t}</span>`).join('');
+
+            // AI Recommendations
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.innerHTML = data.aiRecommendations.map(rec => `
+                <div class="recommendation-profile-card">
+                    <div class="rec-profile-header">
+                        <div class="rec-profile-name">${rec.tech}</div>
+                        <div class="confidence-badge">${rec.confidence}%</div>
+                    </div>
+                    <div class="rec-profile-impact">${rec.impact}</div>
+                    <div class="rec-profile-bar">
+                        <div class="rec-profile-bar-fill" style="width: ${rec.confidence}%"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Timeline
+            const timeline = document.getElementById('submissionTimeline');
+            if (data.allSubmissions) {
+                timeline.innerHTML = data.allSubmissions.map(sub => `
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">${sub.focus}</div>
+                            <div class="timeline-meta">${formatDate(sub.date)} • ${formatStatus(sub.status)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // All submissions
+            const allSubmissionsList = document.getElementById('allSubmissionsList');
+            if (data.allSubmissions) {
+                allSubmissionsList.innerHTML = data.allSubmissions.map(sub => `
+                    <div class="submission-history-item">
+                        <div class="submission-history-date">${formatDate(sub.date)}</div>
+                        <div class="submission-history-content">
+                            <div class="submission-history-title">${sub.focus}</div>
+                            <span class="status-badge status-${sub.status}">${formatStatus(sub.status)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Utility functions
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
+            return num.toString();
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function formatStatus(status) {
+            return status.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        }
+
+        function contactCompanyProfile() {
+            const subject = encodeURIComponent(`Re: Your NZTC Assessment`);
+            window.location.href = `mailto:${companyData.contact.email}?subject=${subject}`;
+        }
+
+        function scheduleConsultation() {
+            alert('Meeting scheduler integration would open here');
+        }
+
+        function addNote() {
+            const note = prompt('Enter internal note:');
+            if (note) {
+                alert('Note added successfully');
+            }
+        }
+    </script>
+</body>
+</html>

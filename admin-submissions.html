@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Assessment Submissions | NZTC Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <h2>NZTC Enterprise</h2>
+                    <div class="enterprise-badge">Admin</div>
+                </div>
+                <nav class="header__nav">
+                    <a href="index.html" class="nav-link active">Go Back to Platform</a>
+                </nav>
+                <div class="header__profile">
+                    <div class="profile-info">
+                        <div class="profile-name">Faizan Abbas</div>
+                        <div class="profile-role">Agentic AI Guy</div>
+                        <div class="profile-company">Net Zero TC</div>
+                    </div>
+                    <div class="profile-avatar">FA</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+        <!-- Header Section -->
+        <div class="admin-header">
+            <div class="header-content">
+                <h1>Assessment Submissions</h1>
+                <p class="header-subtitle">Track and analyze company assessments from across your platform</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn--secondary" onclick="exportSubmissions()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export Data
+                </button>
+                <button class="btn btn--primary" onclick="refreshSubmissions()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background-color: var(--color-bg-1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <polyline points="17 11 19 13 23 9"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value" id="totalSubmissions">24</div>
+                    <div class="stat-label">Total Submissions</div>
+                    <div class="stat-change positive">+8 this month</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background-color: var(--color-bg-3);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <polyline points="9 11 12 14 22 4"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value" id="uniqueCompanies">18</div>
+                    <div class="stat-label">Unique Companies</div>
+                    <div class="stat-change positive">+5 new</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background-color: var(--color-bg-6);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning)" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value" id="avgResponseTime">2.3 days</div>
+                    <div class="stat-label">Avg. Response Time</div>
+                    <div class="stat-change neutral">Same as last month</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background-color: var(--color-bg-5);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value" id="totalEmissions">42.8M</div>
+                    <div class="stat-label">Total CO₂ Tracked (tonnes)</div>
+                    <div class="stat-change">Across all submissions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="filters-section">
+            <div class="search-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search by company name, sector, or contact..." onkeyup="filterSubmissions()">
+            </div>
+            <div class="filter-group">
+                <select id="sectorFilter" class="form-control" onchange="filterSubmissions()">
+                    <option value="">All Sectors</option>
+                    <option value="Oil & Gas">Oil & Gas</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Energy">Energy</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Chemicals">Chemicals</option>
+                </select>
+                <select id="timeFilter" class="form-control" onchange="filterSubmissions()">
+                    <option value="all">All Time</option>
+                    <option value="week">Last 7 Days</option>
+                    <option value="month">Last 30 Days</option>
+                    <option value="quarter">Last Quarter</option>
+                </select>
+                <select id="statusFilter" class="form-control" onchange="filterSubmissions()">
+                    <option value="all">All Status</option>
+                    <option value="new">New</option>
+                    <option value="reviewed">Reviewed</option>
+                    <option value="followed-up">Followed Up</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="submissions-table-container">
+            <table class="submissions-table" id="submissionsTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" onclick="sortTable('company')">
+                            Company
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </th>
+                        <th class="sortable" onclick="sortTable('sector')">
+                            Sector
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </th>
+                        <th class="sortable" onclick="sortTable('submitted')">
+                            Submitted
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </th>
+                        <th>Key Challenge</th>
+                        <th class="sortable" onclick="sortTable('emissions')">
+                            Emissions (tCO₂)
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </th>
+                        <th>AI Recommendations</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="submissionsTableBody">
+                    <!-- Table rows will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <div class="pagination-info">
+                Showing <span id="showingStart">1</span>-<span id="showingEnd">10</span> of <span id="totalResults">24</span> submissions
+            </div>
+            <div class="pagination-controls">
+                <button class="pagination-btn" onclick="previousPage()" id="prevBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    Previous
+                </button>
+                <div class="pagination-numbers" id="paginationNumbers">
+                    <!-- Page numbers will be populated by JavaScript -->
+                </div>
+                <button class="pagination-btn" onclick="nextPage()" id="nextBtn">
+                    Next
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission Detail Modal -->
+    <div id="submissionModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="modalCompanyName">Company Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-submissions.js"></script>
+</body>
+</html>
